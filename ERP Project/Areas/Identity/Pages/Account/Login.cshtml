@@ -1,0 +1,46 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+
+<div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-6">
+      
+        <section>
+            <form id="account" method="post">
+            
+                <div style="text-align: center;">
+                    <a href="~/" ><img  style="width: 180px; height: 140px;" class="img-fluid for-light" src="~/assets/images/logo/29d9f0bdb93e26caf6153e49db944318ed5d8739e6e9b31b6b5324c0a303e883.png" alt=""><img class="img-fluid for-dark" src="~/assets/images/logo/digicon-valley-new-logo.png" alt=""></a>
+                  
+                </div>
+                <h1 style="text-align:center">@ViewData["Title"]</h1>
+                <h4 style="text-align:center">Use a local account to log in.</h4>
+                <hr />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Input.Email"></label>
+                    <input asp-for="Input.Email" class="form-control" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Input.Password"></label>
+                    <input asp-for="Input.Password" class="form-control" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div style="text-align:center" class="form-group">
+                    <button type="submit" class="btn btn-primary">Log in</button>
+                </div>
+            </form>
+        </section>
+    </div>
+    <div class="col-sm-4">
+    </div>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }

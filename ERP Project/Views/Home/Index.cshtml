@@ -1,0 +1,655 @@
+﻿@model ERP_Project.Models.View_Models.DashboardVM
+@{
+    ViewData["Title"] = "Home Page";
+}
+@section DeptTeamsjscss{
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/scrollable.css">
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Dashboard</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="~/">                                       <i data-feather="home"></i></a></li>
+
+                    <li class="breadcrumb-item active">@Model.userRole Dashboard</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    @if (!User.IsInRole("DepartmentHead") && !User.IsInRole("HRManager"))
+    {
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Employees") + "'");">
+                <div class="bg-primary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="users"></i></div>
+                        <div class="media-body">
+                            @if (User.IsInRole("TeamHead"))
+                            {
+                                <span class="m-0">Team Members</span>
+                            }
+                            else
+                            {
+                                <span class="m-0">Employees</span>
+                            }
+
+                            <h4 class="mb-0 counter">@Model.employeeCount</h4><i class="icon-bg" data-feather="user"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (!User.IsInRole("TeamHead"))
+        {
+            <div class="col-sm-6 col-xl-3 col-lg-6">
+                <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Designation") + "'");">
+                    <div class="bg-secondary b-r-4 card-body">
+                        <div class="media static-top-widget">
+                            <div class="align-self-center text-center"><i data-feather="database"></i></div>
+                            <div class="media-body">
+                                <span class="m-0">Designations</span>
+                                <h4 class="mb-0 counter">@Model.companyCount</h4><i class="icon-bg" data-feather="database"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3 col-lg-6">
+                <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Department") + "'");">
+                    <div class="bg-primary b-r-4 card-body">
+                        <div class="media static-top-widget">
+                            <div class="align-self-center text-center"><i data-feather="clipboard"></i></div>
+                            <div class="media-body">
+                                <span class="m-0">Depatments</span>
+                                <h4 class="mb-0 counter">@Model.deptCount</h4><i class="icon-bg" data-feather="clipboard"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-3 col-lg-6">
+                <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Teams") + "'");">
+                    <div class="bg-secondary b-r-4 card-body">
+                        <div class="media static-top-widget">
+                            <div class="align-self-center text-center"><i data-feather="activity"></i></div>
+                            <div class="media-body">
+                                <span class="m-0">Teams</span>
+                                <h4 class="mb-0 counter">@Model.teamCount</h4><i class="icon-bg" data-feather="activity"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("getActive", "Employees") + "'");">
+                <div class="bg-secondary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="clipboard"></i></div>
+                        <div class="media-body">
+                            <span>ActiveEmployees</span>
+                            <h4 class="mb-0 counter">@Model.activeEmployeesCount</h4><i class="icon-bg" data-feather="clipboard"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (!User.IsInRole("TeamHead"))
+        {
+            <div class="col-sm-6 col-xl-3 col-lg-6">
+                <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Leaves", new { type = "pending" }) + "'");">
+                    <div class="bg-primary b-r-4 card-body">
+                        <div class="media static-top-widget">
+                            <div class="align-self-center text-center"><i data-feather="clipboard"></i></div>
+                            <div class="media-body">
+                                <span>Pending Leaves</span>
+                                <h4 class="mb-0 counter">@Model.leavesEmployees.Count()</h4><i class="icon-bg" data-feather="clipboard"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+    else if (User.IsInRole("HRManager"))
+    {
+
+        <div class="col-sm-6 col-xl-4 col-lg-6">
+            <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Employees") + "'");">
+                <div class="bg-primary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="users"></i></div>
+                        <div class="media-body">
+                            <span class="m-0">Employees</span>
+                            <h4 class="mb-0 counter">@Model.employeeCount</h4><i class="icon-bg" data-feather="user"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-4 col-lg-6">
+            <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Department") + "'");">
+                <div class="bg-secondary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="clipboard"></i></div>
+                        <div class="media-body">
+                            <span class="m-0">Depatments</span>
+                            <h4 class="mb-0 counter">@Model.deptCount</h4><i class="icon-bg" data-feather="clipboard"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-4 col-lg-6">
+            <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Designation") + "'");">
+                <div class="bg-primary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="database"></i></div>
+                        <div class="media-body">
+                            <span class="m-0">Designations</span>
+                            <h4 class="mb-0 counter">@Model.companyCount</h4><i class="icon-bg" data-feather="database"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (User.IsInRole("DepartmentHead"))
+    {
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Employees") + "'");">
+                <div class="bg-primary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="users"></i></div>
+                        <div class="media-body">
+                            <span class="m-0">Employees</span>
+                            <h4 class="mb-0 counter">@Model.employeeCount</h4><i class="icon-bg" data-feather="user"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Department") + "'");">
+                <div class="bg-secondary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="clipboard"></i></div>
+                        <div class="media-body">
+                            <span class="m-0">Depatments</span>
+                            <h4 class="mb-0 counter">@Model.deptCount</h4><i class="icon-bg" data-feather="clipboard"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("Index", "Designation") + "'");">
+                <div class="bg-primary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="database"></i></div>
+                        <div class="media-body">
+                            <span class="m-0">Designations</span>
+                            <h4 class="mb-0 counter">@Model.companyCount</h4><i class="icon-bg" data-feather="database"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3 col-lg-6">
+            <div class="card o-hidden" style="cursor:pointer" onclick="@("window.location.href='" + @Url.Action("getActive", "Employees") + "'");">
+                <div class="bg-secondary b-r-4 card-body">
+                    <div class="media static-top-widget">
+                        <div class="align-self-center text-center"><i data-feather="clipboard"></i></div>
+                        <div class="media-body">
+                            <span>ActiveEmployees</span>
+                            <h4 class="mb-0 counter">@Model.activeEmployeesCount</h4><i class="icon-bg" data-feather="clipboard"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (User.IsInRole("HRManager"))
+    {
+
+        <div class="col-xl-12 xl-100 box-col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>NEW APPLICATIONS</h5>
+                    <div class="card-header-right">
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="user-status table-responsive">
+                        <table class="table table-bordernone">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Designation</th>
+                                    <th scope="col">Application Status</th>
+                                    <th scope="col">Interview Date</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.newApplicants)
+                                {
+                                    <tr>
+                                        <td class="bd-t-none u-s-tb">
+                                            <div class="align-middle image-sm-size">
+
+                                                <div class="d-inline-block">
+                                                    <h6>@item.Name </h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@item.Application.Designation.DesignationName</td>
+                                        <td>
+                                            @if (item.AplicantStatus == "Pending" || item.AplicantStatus == "pending")
+                                            {
+                                                <div class="progress-showcase">
+                                                    <div class="progress" style="height: 8px;">
+                                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 40%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else if (item.AplicantStatus == "Selected" || item.AplicantStatus == "selected")
+                                            {
+                                                <div class="progress-showcase">
+                                                    <div class="progress" style="height: 8px;">
+                                                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else if (item.AplicantStatus == "Rejected" || item.AplicantStatus == "rejected")
+                                            {
+                                                <div class="progress-showcase">
+                                                    <div class="progress" style="height: 8px;">
+                                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 80%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </td>
+                                        <td>@item.InterViewDate.ToString("dd-MMMM-yyyy")</td>
+                                        <td>
+                                            <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-warning" asp-controller="Applicants" asp-action="Edit" asp-route-id="@item.ApplicantsId"><i class="icon-pencil"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+
+
+
+    @if (User.IsInRole("DepartmentHead"))
+    {
+        @inject ERP_Project.Services.IdentifyAccessService identifyAccessService
+        @if (await identifyAccessService.IsAManagementHead(User))
+        {
+
+
+            <div class="col-xl-12 xl-100 box-col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>NEW APPLICATIONS</h5>
+                        <div class="card-header-right">
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="user-status table-responsive">
+                            <table class="table table-bordernone">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Designation</th>
+                                        <th scope="col">Application Status</th>
+                                        <th scope="col">Interview Date</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.newApplicants)
+                                    {
+                                        <tr>
+                                            <td class="bd-t-none u-s-tb">
+                                                <div class="align-middle image-sm-size">
+
+                                                    <div class="d-inline-block">
+                                                        <h6>@item.Name </h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.Application.Designation.DesignationName</td>
+                                            <td>
+                                                @if (item.AplicantStatus == "Pending" || item.AplicantStatus == "pending")
+                                                {
+                                                    <div class="progress-showcase">
+                                                        <div class="progress" style="height: 8px;">
+                                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 40%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (item.AplicantStatus == "Selected" || item.AplicantStatus == "selected")
+                                                {
+                                                    <div class="progress-showcase">
+                                                        <div class="progress" style="height: 8px;">
+                                                            <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (item.AplicantStatus == "Rejected" || item.AplicantStatus == "rejected")
+                                                {
+                                                    <div class="progress-showcase">
+                                                        <div class="progress" style="height: 8px;">
+                                                            <div class="progress-bar bg-danger" role="progressbar" style="width: 80%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>@item.InterViewDate.ToString("dd-MMMM-yyyy")</td>
+                                            <td>
+                                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-warning" asp-controller="Applicants" asp-action="Edit" asp-route-id="@item.ApplicantsId"><i class="icon-pencil"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        }
+    }
+    <div class="col-xl-12">
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header" style="padding-bottom:25px;padding-top:25px">
+                                    <h5>PRESENT EMPLOYEES</h5>
+                                </div>
+                                <div class="card-body" style="padding-bottom:5px; padding-top: 0px; padding-right: 3px; padding-left: 3px;">
+                                    <div class="vertical-scroll scroll-demo">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead style="background-color:lightgray">
+                                                    <tr>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Designation</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.presentEmployees)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.Employee.FullName</td>
+                                                            <td>@item.Employee.Department_Designation.DesignationName</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header" style="padding-bottom:25px;padding-top:25px">
+                                    <h5>ABSENT EMPLOYEES</h5>
+                                </div>
+                                <div class="card-body" style="padding-bottom:5px; padding-top: 0px; padding-right: 3px; padding-left: 3px;">
+                                    <div class="vertical-scroll scroll-demo">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead style="background-color:lightgray">
+                                                    <tr>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Designation</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.absentEmployees)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.FullName</td>
+                                                            <td>@item.Department_Designation.DesignationName</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header" style="padding-bottom:25px;padding-top:25px">
+                                    <h5>EMPLOYEES ON LEAVE</h5>
+                                </div>
+                                <div class="card-body" style="padding-bottom:5px; padding-top: 0px; padding-right: 3px; padding-left: 3px;">
+                                    <div class="vertical-scroll scroll-demo">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead style="background-color:lightgray">
+                                                    <tr>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Designation</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model.EmployeesOnLeaves)
+                                                    {
+                                                        <tr>
+                                                            <td>@item.FullName</td>
+                                                            <td>@item.Department_Designation.DesignationName</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-xl-12">
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header" style="padding-bottom:25px;padding-top:25px;background-color:lightgray">
+                            <h5>PENDING APPROVAL REQUEST</h5>
+                            <div class="card-header-right">
+
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="display" id="basic-1">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Employee Name
+                                            </th>
+                                            <th>
+                                                Designation
+                                            </th>
+                                            <th>
+                                                Reason
+                                            </th>
+                                            <th>
+                                                Date
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+
+
+                                            <th>
+                                                Approved By
+                                            </th>
+
+                                            <th>
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @{ if (Model.newCheckoutRequest != null)
+                                            {
+                                                @foreach (var item in Model.newCheckoutRequest)
+                                                {
+                                                    <tr>
+
+                                                        <td>
+                                                            @item.EmployeeTimeRecords.Employee.FullName
+                                                        </td>
+
+                                                        <td>
+                                                            @item.EmployeeTimeRecords.Employee.Department_Designation.DesignationName
+                                                        </td>
+                                                        <td>
+                                                            <button class="example-popover btn btn-success text-center" type="button" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="top" data-offset="0px" data-content="@item.EmployeeTimeRecords.UserRemarks">Popover here</button>
+                                                            @* <button  class="btn btn-success text-center" type="button" rel="comments" title="@item.EmployeeTimeRecords.UserRemarks">awesome user</button>
+                                                            *@
+                                                        </td>
+                                                        <td>
+                                                            @Convert.ToString(string.Format("{0: d MMMM yyyy}", @item.EmployeeTimeRecords.Date))
+
+                                                        </td>
+                                                        <td>
+                                                            @if (item.ApprovalStatus == "approved")
+                                                            {<div style="color:green">Approved</div> }
+                                                            else if (item.ApprovalStatus == "declined")
+                                                            { <div style="color:red">Declined</div>}
+                                                            else
+                                                            { <div style="color:darkblue">Pending</div>}
+                                                        </td>
+
+
+                                                        <td>
+                                                            @{var name = "";
+                                                            }
+                                                            @if (Model.users.Any(a => a.Id == item.ReferenceUserId.ToString()))
+                                                            {
+                                                                var email = Model.users.FirstOrDefault(a => a.Id == item.ReferenceUserId.ToString()).Email;
+                                                                if (!Model.AllEmployees.Any(a => a.Email == email))
+                                                                {
+                                                                    name = "Admin";
+                                                                }
+                                                                else
+                                                                {
+
+                                                                    name = Model.AllEmployees.FirstOrDefault(a => a.Email == email).FullName;
+                                                                }
+                                                            }
+                                                            @name
+                                                        </td>
+
+                                                        <td>
+                                                            @if (item.ApprovalStatus == "approved")
+                                                            {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" onclick="@("window.location.href='" + @Url.Action("ApprovalCheckoutRequestPost", "Attendance", new { id = item.EmployeeTimeRecordId, status = 0 }) + "'");"><i class="fa fa-fw" aria-hidden="true" title="Click For Declined"></i></a> }
+                                                            else if (item.ApprovalStatus == "declined")
+                                                            {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" onclick="@("window.location.href='" + @Url.Action("ApprovalCheckoutRequestPost", "Attendance", new { id = item.EmployeeTimeRecordId, status = 1 }) + "'");"><i class="fa fa-fw" aria-hidden="true" title="Click For Approval"></i></a>}
+                                                            else
+                                                            {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-info" onclick="@("window.location.href='" + @Url.Action("ApprovalCheckoutRequestPost", "Attendance", new { id = item.EmployeeTimeRecordId, status = 1 }) + "'");"><i class="fa fa-fw" aria-hidden="true" title="Click For Approval"></i></a>}
+
+                                                        </td>
+
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+
+                                            <th>
+                                                Employee Name
+                                            </th>
+                                            <th>
+                                                Designation
+                                            </th>
+                                            <th>
+                                                Reason
+                                            </th>
+                                            <th>
+                                                Date
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+
+                                            <th>
+                                                Approved By
+                                            </th>
+
+                                            <th>
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        @section Scripts {
+
+            <script src="~/assets/js/scrollable/perfect-scrollbar.min.js"></script>
+            <script src="~/assets/js/scrollable/scrollable-custom.js"></script>
+
+        }

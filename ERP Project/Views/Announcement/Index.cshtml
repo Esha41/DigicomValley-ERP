@@ -1,0 +1,128 @@
+﻿@model ERP_Project.Models.ViewModel.AttendanceVM
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="tap-top"><i data-feather="chevrons-up"></i></div>
+<!-- tap on tap ends-->
+<!-- page-wrapper Start-->
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>All Announcements</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="display" id="basic-1">
+                <thead>
+                    <tr>
+                        <th>
+                            Title
+                        </th>
+
+                        <th>
+                            Description
+                        </th>
+
+                        <th>
+                            Start Date
+                        </th>
+                        <th>
+                            End Date
+                        </th>
+                        <th>Date</th>
+
+                        <th>
+                            Status
+                        </th>
+                        @if ((User.IsInRole("HRManager")) || (User.IsInRole("Admin")) && !(User.IsInRole("DepartmentHead")))
+                        {
+                            <th>Created By</th>
+
+                            <th class="text-center">Action</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.announcement)
+                    {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+
+                        <td>
+                            @Convert.ToString(string.Format("{0:d/M/yyyy}", item.StartDate))
+                        </td>
+                        <td>
+                            @Convert.ToString(string.Format("{0:d/M/yyyy}", item.EndDate))
+                        </td>
+
+
+                        <td>
+                            @Convert.ToString(string.Format("{0:d/M/yyyy}", item.Date))
+                        </td>
+                        @if (item.Status == true)
+                        {
+                            <td class="text-success py-1">Active</td>
+                        }
+                        else
+                        {
+                            <td class="text-danger py-1">Deactive</td>
+                        }
+                        @if ((User.IsInRole("HRManager")) || (User.IsInRole("Admin")) && !(User.IsInRole("DepartmentHead")))
+                        {
+                            <td>
+                                @{var name = "";
+                                }
+                                @if (Model.users.Any(a => a.Id == item.ReferenceUserId.ToString()))
+                                {
+                                    var email = Model.users.FirstOrDefault(a => a.Id == item.ReferenceUserId.ToString()).Email;
+                                    if (!Model.AllEmployees.Any(a => a.Email == email))
+                                    {
+                                        name = "Admin";
+                                    }
+                                    else
+                                    {
+
+                                        name = Model.AllEmployees.FirstOrDefault(a => a.Email == email).FullName;
+                                    }
+                                }
+                                @name
+                            </td>
+
+                            <td class="text-center">
+                                @if (item.Status == true)
+                                {
+                                    <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" asp-action="ChangeStatus" asp-route-id="@item.AnnouncementId"><i class="icon-power-off" title="Click For Offline"></i></a>
+                                }
+                                else
+                                {
+                                    <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" asp-action="ChangeStatus" asp-route-id="@item.AnnouncementId"><i class="icon-power-off" title="Click For Online"></i></a>
+
+                                } <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-info" asp-action="Edit" asp-route-id="@item.AnnouncementId"><i class="icon-pencil"></i></a>
+                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" asp-action="Delete" asp-route-id="@item.AnnouncementId"><i class="icon-trash"></i></a>
+                            </td>
+                        }
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,212 @@
+﻿@model IEnumerable<ERP_Project.Models.Applicants>
+
+@{
+    ViewData["Title"] = "Applicants";
+}
+
+@section DeptTeamsjscss{
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
+}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>@ViewBag.applicationName Applicants</h3>
+            </div>
+
+            <div class="col-3 ">
+
+            </div>
+            <div class="col-3 ">
+
+                <a class="btn btn-pill btn-primary btn-lg fixed" type="submit" asp-controller="Applicants" asp-action="Create">Add Applicants</a>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("GetApplicants", "Applications", FormMethod.Get))
+{
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label class="control-label">Select Application Status</label>
+                <select name="status" id="select1" class="form-control">
+                    @if (ViewBag.selctedVal == "--Select ApplicationStatus--")
+                    {
+                        <option selected disabled>@ViewBag.selctedVal</option>
+                    }
+                    else
+                    {
+                        <option selected>@ViewBag.selctedVal</option>
+                        <option>--Select ApplicationStatus--</option>
+                    }
+                    <option>Selected</option>
+                    <option>Pending</option>
+                    <option>Rejected</option>
+                    <option>In Process</option>
+                    <option>Optional</option>
+                    <option>Interview Scheduled</option>
+                    <option>Not Responding</option>
+                    <option>Need Followup</option>
+                    <option>Future Hiring</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label>Select Interview Date</label>
+                <input class="datepicker-here form-control" value="@ViewBag.selectedDate" name="date" type="datetime" data-language="en" data-position="bottom left" placeholder="select date" data-original-title="" title="">
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <br />
+
+            <button type="submit" class="btn btn-primary form-control">
+                <i class="fa fa-search-plus">&nbsp;&nbsp;Search</i>
+            </button>
+        </div>
+
+    </div>
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display" id="basic-1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Phone)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Email)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Portal)
+                                    </th>
+                                    <th>
+                                        Interview Date
+                                    </th>
+                                    @*                                    <th>
+                                            @Html.DisplayNameFor(model => model.InterViewDate)
+                                        </th>*@
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.AplicantStatus)
+                                    </th>
+                                    <th>
+                                        SMS send
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+
+                                    <tr>
+                                        <td>
+                                            <a style="font-weight: bold;" asp-action="Create" asp-controller="Interviews" asp-route-id="@item.ApplicantsId">@Html.DisplayFor(modelItem => item.Name)</a>
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Phone)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Email)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Portal)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.InterViewDate)
+                                        </td>
+                                        @*                                    <td>
+                                                @Html.DisplayFor(modelItem => item.InterViewDate)
+                                            </td>*@
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.AplicantStatus)
+                                        </td>
+                                        <td>
+
+                                            @if (item.SMSsend == true)
+                                            {
+                                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" asp-action="smsSend" asp-route-id="@item.ApplicantsId" asp-controller="Applications" title="Click for Unsend SMS"><i class="icon-power-off"></i></a>
+                                            }
+                                            else
+                                            {
+                                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" asp-action="smsSend" asp-route-id="@item.ApplicantsId" asp-controller="Applications" title="Click for SMS Send"><i class="icon-power-off"></i></a>
+
+                                            }
+
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-controller="Applicants" asp-route-id="@item.ApplicantsId"><i class="icon-pencil" style="font-size:23px;color:blue;"></i></a>
+                                            <a asp-action="Delete" asp-controller="Applicants" asp-route-id="@item.ApplicantsId"><i class="icon-trash" style="font-size:23px;color:red;"></i></a><br />
+                                            @* <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-warning" asp-action="Details" asp-controller="Applicants" asp-route-id="@item.ApplicantsId" title="Click For Applicants Details"><i class="icon-comment-alt"></i></a>
+                                            *@
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Phone)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Email)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Portal)
+                                    </th>
+                                    <th>
+                                        ApplyDate
+                                    </th>
+                                    @*                                    <th>
+                                            @Html.DisplayNameFor(model => model.InterViewDate)
+                                        </th>*@
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.AplicantStatus)
+                                    </th>
+                                    <th>
+                                        SMS send
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section DeptTeamsjs{
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+    <script src="~/assets/js/dropzone/dropzone-script.js"></script>
+
+    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+    <script src="../assets/js/icons/icons-notify.js"></script>
+    <script src="../assets/js/icons/icon-clipart.js"></script>
+
+}

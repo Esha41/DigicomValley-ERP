@@ -1,0 +1,122 @@
+﻿@model IEnumerable<ERP_Project.Models.Applicants>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Applicants</h3>
+            </div>
+            <div class="col-4 ">
+            </div>
+            <div class="col-2 ">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display" id="basic-1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Phone)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Email)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Portal)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.InterViewDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.AplicantStatus)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Application)
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                 
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Phone)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Email)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Portal)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.InterViewDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.AplicantStatus)
+                                        </td>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Application.Title)
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.ApplicantsId"><i class="icon-pencil" style="font-size:23px;color:blue;"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.ApplicantsId"><i class="icon-trash" style="font-size:23px;color:red;"></i></a><br />
+                                            <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-warning" asp-action="Details" asp-route-id="@item.ApplicantsId" title="Click For Applicants Details"><i class="icon-comment-alt"></i></a>
+
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Phone)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Email)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Portal)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.InterViewDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.AplicantStatus)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Application)
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,130 @@
+﻿@model ERP_Project.Models.Leaves
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Add Leaves
+                </h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Leaves"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Apps</li>
+
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<form asp-action="Create" method="post">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <div class="row">
+                                @if (User.IsInRole("Employee"))
+                                {
+                                <div class="col-sm-6">
+                                    <label class="control-label">Employee</label>
+                                    <input readonly value="@ViewBag.empName" class="form-control" />
+                                </div>
+                                        }
+                                        else
+                                        {
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label asp-for="EmployeeId" class="control-label"></label>
+                                                <select asp-for="EmployeeId" class="form-control" asp-items="ViewBag.EmployeeId">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        }
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label asp-for="LeavesCategoryId" class="control-label"></label>
+                                                <select asp-for="LeavesCategoryId" class="form-control" asp-items="ViewBag.LeavesCategoryId">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label asp-for="From" class="control-label"></label>
+                                                <input asp-for="From" class="form-control" />
+                                                <span asp-validation-for="From" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label asp-for="To" class="control-label"></label>
+                                                <input asp-for="To" class="form-control" />
+                                                <span asp-validation-for="To" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label asp-for="NumofDays" class="control-label"></label>
+                                                <input asp-for="NumofDays" class="form-control" />
+                                                <span asp-validation-for="NumofDays" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label asp-for="Reason" class="control-label"></label>
+                                                <input asp-for="Reason" class="form-control" />
+                                                <span asp-validation-for="Reason" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*                            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label asp-for="Status" class="control-label"></label>
+                        <select asp-for="Status" id="select1" class="form-control">
+                            <option selected disabled>--Select Status--</option>
+                            <option>Approved</option>
+                            <option>Pending</option>
+                            <option>Declined</option>
+                        </select>
+                    </div>
+                </div>
+            </div>*@
+                                    <br />
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <input type="submit" value="Add" class="btn btn-success mr-3" />
+                                            @if (User.IsInRole("Admin") || User.IsInRole("ManagingDirector") || User.IsInRole("DepartmentHead"))
+                                            {
+                                                <a class="btn btn-danger" asp-action="Index" asp-controller="Leaves">Back</a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-danger" asp-action="EmployeeIndex" asp-controller="Leaves">Back</a>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

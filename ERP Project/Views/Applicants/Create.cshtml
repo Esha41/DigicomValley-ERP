@@ -1,0 +1,228 @@
+﻿@model ERP_Project.Models.Applicants
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Add Applicants
+                </h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Applicants"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Apps</li>
+
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-9">
+    </div>
+    <div class="col-3" style="text-align:right">
+        <button class="btn btn-success" onclick="doIt()">Check History</button>
+    </div>
+</div>
+<br />
+<form asp-action="CreateA" asp-controller="Applications" method="post">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+
+                            <div class="row">
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Name" class="control-label"></label>
+                                        <input asp-for="Name" class="form-control" required />
+                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Phone" class="control-label"></label>
+                                        <input asp-for="Phone" class="form-control" id="fnum" required placeholder="XXXXXXXXXXX" />
+                                        @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Email" class="control-label"></label>
+                                        <input asp-for="Email" class="form-control" />
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                @*    <div class="col-sm-6">
+                <div class="form-group">
+                    <label asp-for="Portal" class="control-label"></label>
+                    <input asp-for="Portal" class="form-control" required />
+                    <span asp-validation-for="Portal" class="text-danger"></span>
+                </div>
+            </div>*@
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Portal" class="control-label"></label>
+                                        <select asp-for="Portal" id="select1" class="form-control">
+                                            <option selected disabled>--Select Portal--</option>
+                                            <option>Facebook</option>
+                                            <option>Indeed</option>
+                                            <option>Linkdin</option>
+                                            <option>Rozee.pk</option>
+                                            <option>Twitter</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="AplicantStatus" class="control-label"></label>
+                                        <select asp-for="AplicantStatus" id="select1" class="form-control">
+                                            <option selected disabled>--Select InterviewStatus--</option>
+                                            <option>Selected</option>
+                                            <option>Pending</option>
+                                            <option>Rejected</option>
+                                            <option>In Process</option>
+                                            <option>Optional</option>
+                                            <option>Interview Scheduled</option>
+                                            <option>Not Responding</option>
+                                            <option>Need Followup</option>
+                                            <option>Future Hiring</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="ApplicationId" class="control-label"></label>
+                                        <select asp-for="ApplicationId" class="form-control" asp-items="ViewBag.ApplicationId"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="InterViewDate" class="control-label"></label>
+                                        <input asp-for="InterViewDate" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="exampleFormControlTextarea1">Description:</label>
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="Description"></textarea>
+
+                                </div>
+                            </div>
+
+                                <br />
+
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="submit" value="Add" class="btn btn-success mr-3" required />
+                                        <a class="btn btn-danger" asp-action="Index" asp-controller="Applications">Back</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@if (ViewBag.isApplicantExist == true)
+{
+    <h3>
+        Applicants already exist!
+    </h3>
+    <br />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            @foreach (var item in ViewBag.myList)
+
+                            {
+                                <div class="row">
+                                    <div Class="col-4">Name:<b>@item.Name</b></div>
+                                    <div Class="col-4">Email:<b>@item.Email</b></div>
+                                    <div Class="col-4">Phone:<b>@item.Phone</b></div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div Class="col-4">Portal:<b>@item.Portal</b></div>
+                                    <div Class="col-4">Aplicant Status:<b>@item.AplicantStatus</b></div>
+                                    <div Class="col-4">Application:<b>@item.Application.Title</b></div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div Class="col-12">Description:<b>@item.Description</b></div>
+                                </div>
+                                <br />
+                                <h6>Remarks:</h6>
+                                @foreach (var item1 in ViewBag.myRemarksList)
+
+                                {
+                                    if (item1.ApplicantsId == item.ApplicantsId)
+                                    {
+                                        <div class="row">
+                                            <div Class="col-4"><br />-@item1.Remarks</div>
+                                            <br />
+                                        </div>
+                                    }
+
+                                }
+                                <br />
+                                <hr />
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+else if (ViewBag.isApplicantExist == false)
+{
+    <h3>
+        No history!
+    </h3>
+    <br />
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+    debugger
+    function doIt() {
+            var x = document.getElementById('fnum').value;
+        window.location = '/Applicants/Create?num=' + x;
+     @*   debugger
+            $.ajax({
+
+                    type: "POST",
+                    url: '@Url.Action("Create")',
+                data: { num: x },
+                    success: function () {
+                        window.location = '/Applicants/Create?num=' + x;
+                    }
+
+                });*@
+
+    }
+    </script>
+
+}

@@ -1,0 +1,149 @@
+﻿@model ERP_Project.Models.Applications
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Edit Applications
+                </h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Applications"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Apps</li>
+
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="ApplicationId" />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Title" class="control-label"></label>
+                                        <input asp-for="Title" class="form-control" />
+                                        <span asp-validation-for="Title" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="PostDate" class="control-label"></label>
+                                        <input asp-for="PostDate" class="form-control" />
+                                        <span asp-validation-for="PostDate" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Company</label>
+                                        <select asp-for="CompanyId" required class="form-control" id="ddlCompany" asp-items="ViewBag.CompanyId">
+                                            <option>Please select one</option>
+                                        </select>
+                                        <span asp-validation-for="CompanyId" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                @*   <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Department</label>
+                                            <div id="ddlDepartment1">
+                                                <select required asp-for="employee.DepartmentId" class="form-control" id="ddlDepartment" asp-items="ViewBag.DepartmentId">
+
+                                                </select>
+                                            </div>
+                                            <span asp-validation-for="employee.DepartmentId" class="text-danger"></span>
+
+                                        </div>
+                                    </div>*@
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Designation</label>
+                                        <div id="ddlDepartment1">
+                                            <select required asp-for="DesignationId" class="form-control" id="ddlDepartment" asp-items="ViewBag.DesignationId">
+                                                @*<option>Please select one</option>*@
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="DesignationId" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="ApplicationStatus" class="control-label"></label>
+                                        <select asp-for="ApplicationStatus" id="select1" class="form-control">
+                                            <option selected disabled>---Select Status---</option>
+                                            <option>Open</option>
+                                            <option>Processing</option>
+                                            <option>Close</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Discription" class="control-label"></label>
+                                        <textarea asp-for="Discription" class="form-control"></textarea>
+                                        <span asp-validation-for="Discription" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+
+                            <div class="row">
+                                <div class="col">
+                                    <input type="submit" value="Update" class="btn btn-success mr-3" />
+                                    <a class="btn btn-danger" asp-action="Index" asp-controller="Applications">Back</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#ddlCompany').change(function () {
+
+                $.ajax({
+                    type: "post",
+                    url: "/Applications/GetDepartmentsDesignations",
+                    data: { id: $('#ddlCompany').val() },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        // debugger;
+                        var district = "<select class='form-control' id='ddlDepartment'  required = 'required'>";
+                        district = district + '<option>Please select one</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            district = district + '<option value="' + data[i].value + '">' + data[i].text + '</option>';
+                        }
+                        district = district + '</select>';
+                        $('#ddlDepartment1').html(district);
+                    }
+                });
+            });
+        });
+    </script>
+}

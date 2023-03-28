@@ -1,0 +1,71 @@
+﻿@model ERP_Project.Models.Shifts
+
+@{
+    ViewData["Title"] = "Shift-Create";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Add Shifts
+                </h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Shifts"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Apps</li>
+
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<form asp-action="Create" method="post">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Company</label>
+                                        <select asp-for="CompanyId" required class="form-control" id="ddlCompany" asp-items="ViewBag.CompanyId">
+                                            <option>Please select one</option>
+                                        </select>
+                                        <span asp-validation-for="CompanyId" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="ShiftName" class="control-label"></label>
+                                        <input asp-for="ShiftName" class="form-control" />
+                                        <span asp-validation-for="ShiftName" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <br />
+
+                            <div class="row">
+                                <div class="col">
+                                    <input type="submit" value="Add" class="btn btn-success mr-3" />
+                                    <a class="btn btn-danger" asp-action="Index" asp-controller="Shifts">Back</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

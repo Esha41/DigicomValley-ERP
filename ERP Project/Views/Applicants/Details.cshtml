@@ -1,0 +1,128 @@
+﻿@model ERP_Project.Models.Applicants
+
+@{
+    ViewData["Title"] = "Details";
+}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Applicant Details
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form theme-form">
+                        @foreach (var item in ViewBag.myList)
+
+                        {
+                            <div class="row">
+                                <div Class="col-4">Name:<b>@item.Name</b></div>
+                                <div Class="col-4">Email:<b>@item.Email</b></div>
+                                <div Class="col-4">Phone:<b>@item.Phone</b></div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div Class="col-4">Portal:<b>@item.Portal</b></div>
+                                <div Class="col-4">Aplicant Status:<b>@item.AplicantStatus</b></div>
+                                <div Class="col-4">Application:<b>@item.Application.Title</b></div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div Class="col-12">Description:<b>@item.Description</b></div>
+                            </div>
+                            <br />
+                            <hr />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form theme-form">
+                        <div class="row">
+                            <div class="col-4"><h4>Remarks:</h4></div>
+                            <div class="col-4"></div>
+                            <div class="col-4" style="text-align:right">
+                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" data-toggle="modal" onclick="Selectedid(@ViewBag.id)" data-target="#adminRemarks"><i class="fa fa-plus "></i>&nbsp; Add Remarks</a>
+
+                            </div>
+                        </div>
+
+                        @foreach (var item in ViewBag.myRemarksList)
+
+                        {
+                            <div class="row">
+                                <div Class="col-4"><br />@item.Remarks</div>
+                            </div>
+                            <hr />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        @* <a class="btn btn-danger" asp-action="Index" asp-controller="Applications">Back</a>*@
+        <a class="btn btn-danger" asp-action="GetApplicants" asp-controller="Applications" asp-route-id="@Model.ApplicationId">Back</a>
+
+    </div>
+</div>
+<div class="modal fade" id="adminRemarks" tabindex="-1" role="dialog" aria-labelledby="adminRemarks" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Admin Remarks</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1" style="color:red;">Remarks:</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="exampleFormControlTextarea1"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <form asp-action="AddRemarks">
+                    @Html.Hidden("id", 0)
+                    @Html.Hidden("remarks", 0)
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+
+                    <button class="btn btn-primary" type="submit" onclick="SelectedRemarks()">Add</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+
+        function SelectedRemarks(obj) {
+            document.getElementById('remarks').value = document.getElementById('exampleFormControlTextarea1').value;
+            return false;
+        }
+        function Selectedid(obj) {
+            document.getElementById('id').value = obj;
+            return false;
+        }
+    </script>
+}

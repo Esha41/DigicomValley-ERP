@@ -1,0 +1,471 @@
+﻿@model ERP_Project.Models.ViewModel.AttendanceVM
+@{
+    ViewData["Title"] = "AttendanceAdmin";
+    var DaysInmonth = 0;
+    List<int> sundays = new List<int>();
+    if (Model.selectedMonth == 0)
+    {
+        DaysInmonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+    }
+    else
+    {
+        DaysInmonth = DateTime.DaysInMonth(DateTime.Now.Year, Model.selectedMonth);
+    }
+
+}
+
+@section DeptTeamsjscss{
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
+}
+<br />
+<h4>Attendance Record</h4>
+<br />
+<form asp-action="Index">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+
+                <label class="form-label">Select Company:</label>
+                <select class="form-control btn-square" id="company" asp-for="company">
+                </select>
+
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="form-group">
+
+                <div class="form-group">
+                    <label asp-for="departments">Select Department</label>
+                    <select class="form-control btn-square" id="department" asp-for="departments.DepartmentId">
+                    </select>
+                </div>
+            </div>
+        </div>
+        @*     <div class="col-sm-4">
+                <div class="form-group">
+                    <label asp-for="employees">Select Employee </label>
+                    <select class="form-control btn-square" id="employee" asp-for="employees.EmployeeId">
+                    </select>
+                </div>
+
+            </div>*@
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label>Select Month</label>
+                <input required class="datepicker-here form-control" type="text" data-language="en" data-min-view="months" data-view="months" data-date-format="MM" asp-for="getMonth">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label>Enter Year</label>
+                <input class="form-control btn-square" asp-for="getYear" required>
+
+            </div>
+        </div>
+        <div class="col-sm-4">
+        </div>
+
+        <div class="col-md-4">
+
+            <button type="submit" class="btn btn-primary form-control">
+                <i class="fa fa-search-plus">&nbsp;&nbsp;Search</i>
+            </button>
+        </div>
+    </div>
+    <br />
+
+</form>
+
+@if (ViewBag.IsRecordExist == false)
+{
+    <h2 style="color:red">No record exist!</h2>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                @{var x = 0; }
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Employee Name</th>
+                                    @for (var numb = 1; numb <= DaysInmonth; numb++)
+                                    {
+                                        <th>@numb</th>
+                                    }
+                                </tr>
+
+                            </thead>
+                            @{var count = 0;
+                                var count1 = 0;}
+                            <tbody>
+                                @foreach (var item in Model.AllEmployees)
+                                {
+                                    var enddate = Model.EmployeePositionsList.Where(a => a.EmployeeId == item.EmployeeId).FirstOrDefault().EndDate;
+                                    if (Model.selectedMonth != 0 && enddate.Date.Month < Model.selectedMonth && enddate.Date.Year <= Model.getYear && item.Status == false)
+                                    {
+                                        continue;
+                                    }
+                                    else if (Model.selectedMonth == 0 && enddate.Date < DateTime.Now.Date && item.Status == false)
+                                    {
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>@{ count = count + 1; } @count</td>
+                                            <td>@item.FullName</td>
+
+                                            @for (var numb = 1; numb <= DaysInmonth; numb++)
+
+                                            {
+                                                if (Model.selectedMonth != 0)
+                                                {
+                                                    // var dateofMonth = new DateTime(2021, DateTime.Now.Month, numb);
+                                                    if (Model.AllemployeeTimeRecords != null)
+                                                    {
+                                                        var stat = Model.AllemployeeTimeRecords.Where(a => a.EmployeeId == item.EmployeeId && a.RecordTime.Day == numb).FirstOrDefault();
+                                                        if ((stat != null) || (Model.employeeLeaves != null || Model.employeeLeaves.Count() != 0))
+                                                        {
+                                                            var oDate = new DateTime(Model.getYear, Model.selectedMonth, numb);
+                                                            if (Model.sundays.Contains(numb))
+                                                            {
+                                                                <td>-</td>
+                                                            }
+                                                            @*    else if (Model.EmployeePositionsList.Any(p => p.EmployeeId == item.EmployeeId && p.StartDate > oDate.Date)) //>= Model.selectedMonth&&p.StartDate.Year<=DateTime.Now.Year&& p.StartDate.Day > numb
+                                                                            {
+                                                                                if (Model.EmployeePositionsList.Any(p => p.EmployeeId == item.EmployeeId && ((p.StartDate.Month > Model.selectedMonth && p.StartDate.Year >= Model.getYear) || (p.EndDate.Month < Model.selectedMonth && p.EndDate.Year <= Model.getYear))))
+                                                                                    {
+
+                                                                }
+                                                                              <td >-</td>
+                                                                            }*@
+                                                              else if (Model.EmployeePositionsList.Any(p => p.EmployeeId == item.EmployeeId && p.EndDate <= oDate.Date && item.Status==false)) //>= Model.selectedMonth&&p.StartDate.Year<=DateTime.Now.Year&& p.StartDate.Day > numb
+                                                                {
+                                                                    <td>-</td>
+                                                                }
+                                                            else if (stat == null)
+                                                            {
+
+                                                                if (Model.employeeLeaves.Any(a => (a.EmployeeId == item.EmployeeId) && (a.From.Day == numb || a.To.Day == numb || ((numb >= a.From.Day && numb <= a.To.Day)))))
+                                                                {
+                                                                    <td style="color:blue;">L</td>
+                                                                }
+                                                                else if (!Model.employeeLeaves.Any(a => (a.EmployeeId == item.EmployeeId) && (a.From.Day == numb || a.To.Day == numb || ((numb >= a.From.Day && numb <= a.To.Day)))))
+                                                                {
+                                                                    <td style="color:red;">A</td>
+
+                                                                }
+                                                            }
+                                                            else if (stat != null)
+                                                            {
+                                                                if (stat.IsApproved == false)
+                                                                {
+                                                                    <td style="color:red;">A</td>
+                                                                }
+                                                                else if (stat.IsApproved == true && (Model.reportsList.Any(a => a.EmployeeId == item.EmployeeId)))
+                                                                {
+                                                                    if ((User.IsInRole("DepartmentHead")) || (User.IsInRole("Admin")))
+                                                                    {
+
+                                                                        var empId = item.EmployeeId;
+                                                                        var Chdate = oDate;
+                                                                        <td data-toggle="modal" data-target="#MarkAbsent_@count1" style="color:green;cursor:pointer">P</td>
+                                                                        <form asp-action="Index">
+                                                                            <input hidden asp-for="@empId" />
+                                                                            <input hidden asp-for="@Chdate" />
+                                                                            <div class="modal fade" id="MarkAbsent_@count1" tabindex="-1" role="dialog" aria-labelledby="MarkAbsent_@count1" aria-hidden="true">
+                                                                                <div class="modal-dialog" role="document">
+                                                                                    <div class="modal-content">
+                                                                                        <div class="modal-header" style="text-align:center">
+                                                                                            <h5>&nbsp;&nbsp;Change Attendance Status </h5>
+                                                                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                                                        </div>
+                                                                                        <div class="modal-body">
+                                                                                            <em>Employee Name : @item.FullName </em><br />
+                                                                                            <em>Record Date   :   @String.Format("{0:d/M/yyyy}", Chdate.Date)</em>
+                                                                                            <hr />
+                                                                                            <div class="row container-fluid">
+
+                                                                                                <div class="col-md-8">
+                                                                                                    <label class="col-form-label ">Toggle to Mark Absent/Present</label>
+                                                                                                </div>
+                                                                                                <div class="col-md-4">
+                                                                                                    <div class="media-body text-right switch-lg icon-state">
+                                                                                                        <label class="switch">
+                                                                                                            <input type="checkbox" checked="" asp-for="AtToggle"><span class="switch-state"></span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <label for="exampleFormControlTextarea1" style="color:red;">Reason for Changing Status:</label>
+                                                                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="ChangeAttendanceStatusReason"></textarea>
+                                                                                            </div>
+
+
+                                                                                        </div>
+                                                                                        <div class="modal-footer">
+                                                                                            <button class="btn btn-primary" type="submit" onsubmit="disablebtn()">Submit</button>
+                                                                                            <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="color:green;">P</td>
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="color:green;">-</td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="color:red;">A</td>
+                                                        }
+                                                    }
+                                                }
+                                                else if (numb <= DateTime.Now.Day)
+                                                {
+                                                    if (Model.EmployeePositionsList.Any(a => a.EndDate.Month < DateTime.Now.Month && a.EndDate < DateTime.Now && a.EmployeeId == item.EmployeeId && item.Status == false))
+                                                    {
+                                                        continue;
+                                                    }
+                                                    var dateofMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, numb);
+                                                    if (Model.AllemployeeTimeRecords != null)
+                                                    {
+                                                        var stat = Model.AllemployeeTimeRecords.Where(a => a.EmployeeId == item.EmployeeId && a.RecordTime.Day == numb).FirstOrDefault();
+                                                        if (Model.sundays.Contains(numb))
+                                                        {
+                                                            <td>-</td>
+                                                        }
+                                                        else if ((stat != null) || (Model.employeeLeaves != null || Model.employeeLeaves.Count() != 0))
+                                                        {
+
+                                                            if (stat == null)
+                                                            {
+
+                                                                if (Model.employeeLeaves.Any(a => (a.EmployeeId == item.EmployeeId) && (a.From.Day == numb || a.To.Day == numb || ((numb >= a.From.Day && numb <= a.To.Day)))))
+                                                                {
+                                                                    <td style="color:blue;">L</td>
+                                                                }
+                                                                else if (!Model.employeeLeaves.Any(a => (a.EmployeeId == item.EmployeeId) && (a.From.Day == numb || a.To.Day == numb || ((numb >= a.From.Day && numb <= a.To.Day)))))
+                                                                {
+                                                                    <td style="color:red;">A</td>
+
+                                                                }
+
+                                                            }
+                                                            if (stat != null)
+                                                            {
+                                                                if (stat.IsApproved == false)
+                                                                {
+                                                                    <td style="color:red;">A</td>
+                                                                }
+                                                                else if (stat.IsApproved == true && (Model.reportsList.Any(a => a.EmployeeId == item.EmployeeId && a.Status == true)))
+                                                                {
+                                                                    //   <td style="color:green;">P</td>
+                                                                    @if ((User.IsInRole("DepartmentHead")) || (User.IsInRole("Admin")))
+                                                                    {
+
+                                                                        var empId = item.EmployeeId;
+                                                                        var Chdate = dateofMonth;
+                                                                        <td data-toggle="modal" data-target="#MarkAbsent_@count1" style="color:green;cursor:pointer">P</td>
+                                                                        <form asp-action="Index">
+                                                                            <input hidden asp-for="@empId" />
+                                                                            <input hidden asp-for="@Chdate" />
+                                                                            <div class="modal fade" id="MarkAbsent_@count1" tabindex="-1" role="dialog" aria-labelledby="MarkAbsent_@count1" aria-hidden="true">
+                                                                                <div class="modal-dialog" role="document">
+                                                                                    <div class="modal-content">
+                                                                                        <div class="modal-header" style="text-align:center">
+                                                                                            <h5>&nbsp;&nbsp;Change Attendance Status </h5>
+                                                                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                                                        </div>
+                                                                                        <div class="modal-body">
+                                                                                            <em>Employee Name : @item.FullName </em><br />
+                                                                                            <em>Record Date   :   @String.Format("{0:d/M/yyyy}", Chdate.Date)</em>
+                                                                                            <hr />
+                                                                                            <div class="row container-fluid">
+
+                                                                                                <div class="col-md-8">
+                                                                                                    <label class="col-form-label ">Toggle to Mark Absent/Present</label>
+                                                                                                </div>
+                                                                                                <div class="col-md-4">
+                                                                                                    <div class="media-body text-right switch-lg icon-state">
+                                                                                                        <label class="switch">
+                                                                                                            <input type="checkbox" checked="" asp-for="AtToggle"><span class="switch-state"></span>
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <label for="exampleFormControlTextarea1" style="color:red;">Reason for Changing Status:</label>
+                                                                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="ChangeAttendanceStatusReason"></textarea>
+                                                                                            </div>
+
+
+                                                                                        </div>
+                                                                                        <div class="modal-footer">
+                                                                                            <button class="btn btn-primary" type="submit" onsubmit="disablebtn()">Submit</button>
+                                                                                            <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td style="color:green;">P</td>
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="color:red;">A</td>
+
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <td style="color:black;">-</td>
+                                                }
+                                                count1 = count1 + 1;
+
+                                            }
+
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<!--modal chng attendance status-->
+
+
+
+@section DeptTeamsjs{
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+    <script src="~/assets/js/dropzone/dropzone-script.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            debugger;
+            var companyddl = $('#company');
+            var departmentddl = $('#department');
+            var employeeddl = $('#employee');
+            $.ajax({
+                type: "post",
+                url: "/Attendance/GetCompanies",
+                datatype: "json",
+                traditional: true,
+                success: function (data) {   //data is the json response from server
+
+                    companyddl.append($('<option/>', { value: -1, text: '--Select Company--' }));
+                    departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                    // employeeHeadddl.append($('<option/>', { value: -1, text: '--Select Team Heads--' }));
+                    // employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+
+                    departmentddl.prop('disabled', true);
+                    //   employeeHeadddl.prop('disabled', true);
+                    employeeddl.prop('disabled', true);
+
+
+                    $(data).each(function (index, item) {
+                        companyddl.append($('<option/>', { value: item.value, text: item.text }));
+                    });
+                }
+            });
+
+            companyddl.change(function () {
+                debugger;
+                if ($(this).val() == "-1")   //if the selected value is -1(means no value selected)
+                {
+                    departmentddl.empty();
+                    departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                    departmentddl.val('-1');
+                    departmentddl.prop('disabled', true);
+                }
+                else {
+                    $.ajax({
+                        type: "post",
+                        url: "/Attendance/GetDepartmentsByCompanyId",
+                        data: { Companyid: $(this).val() },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+                            debugger;
+                            departmentddl.empty(); //empty already existing values
+                            departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                            departmentddl.prop('disabled', false);
+
+                            $(data).each(function (index, item) {
+                                departmentddl.append($('<option/>', { value: item.value, text: item.text }));
+                            });
+                        }
+                    });
+                }
+            });
+
+            departmentddl.change(function () {
+                debugger;
+                if ($(this).val() == "-1")   //if the selected value is -1(means no value selected)
+                {
+
+                    employeeddl.empty();
+                    //  employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+                    employeeddl.val('-1');
+                    employeeddl.prop('disabled', true);
+                }
+                else {
+                    $.ajax({
+                        type: "post",
+                        url: "/Attendance/GetEmployeesByDepartmentId",
+                        data: { DepartmentId: $(this).val() },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+                            employeeddl.empty(); //empty already existing values
+                            //  employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+                            employeeddl.prop('disabled', false);
+
+                            $(data).each(function (index, item) {
+
+                                employeeddl.append($('<option/>', { value: item.value, text: item.text }));
+
+                            });
+                        }
+                    });
+                }
+            });
+
+
+        });
+
+    </script>
+}

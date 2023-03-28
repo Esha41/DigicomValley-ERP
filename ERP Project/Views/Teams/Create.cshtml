@@ -1,0 +1,256 @@
+﻿@model ERP_Project.Models.ViewModel.DepartmentsVM
+@{
+}
+
+@section DeptTeamsjscss{
+    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/datatables.css">
+
+    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/simple-line-icon.css">
+
+    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/select2.css">
+}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Add Team
+                </h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">                                       <i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Apps</li>
+
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<form asp-action="Create" method="post">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+
+                                        <label class="form-label">Company:</label>
+                                        <select class="form-control btn-square" id="company" asp-for="teams.Department.CompanyId">
+                                        </select>  @*asp-items="ViewBag.CompanyId"*@
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+
+                                        <label class="form-label">Department:</label>
+                                        <select class="form-control btn-square" id="department" asp-for="teams.DepartmentId" required>
+                                        </select>@*  asp-items="ViewBag.DepartmentId"*@
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="teams.TeamName" class="form-label">Team Name:</label>
+                                        <input asp-for="teams.TeamName" class="form-control" type="text" placeholder="Name must be Unique" required>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="container-fluid">
+                                            <div class="select2-drpdwn">
+                                                <div class="row">
+                                                    <!-- Default Textbox start-->
+                                                    <div class="col-md-12">
+
+                                                        <div class="mb-2">
+                                                            <div class="col-form-label">Team Head:</div>
+                                                            <select class="js-example-placeholder-multiple teamHeadPlaceHolder col-sm-12" asp-for="EmployeesIds" id="employeeHead" multiple="multiple">
+                                                            </select> @* asp-items="ViewBag.EmployeeId"*@
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="container-fluid">
+                                            <div class="select2-drpdwn">
+                                                <div class="row">
+                                                    <!-- Default Textbox start-->
+                                                    <div class="col-md-12">
+
+                                                        <div class="mb-2">
+                                                            <div class="col-form-label">Team Employees:</div>
+                                                            <select class="js-example-placeholder-multiple teamEmployeesPlaceHolder col-sm-12" asp-for="TeamEmployeesIds" id="employee" multiple="multiple">
+                                                            </select>   @* asp-items="ViewBag.EmployeeId"*@
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+
+                            <div class="row">
+                                <div class="col">
+                                    <input type="submit" value="Add" class="btn btn-success mr-3" />
+                                    <a class="btn btn-danger" href="~/Teams/Index">Back</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section DeptTeamsjs{
+    <script src="../assets/js/datatable/datatables/jquery.dataTables.min.js"></script>
+    <script src="../assets/js/datatable/datatables/datatable.custom.js"></script>
+
+    <script src="../assets/js/icons/icons-notify.js"></script>
+    <script src="../assets/js/icons/icon-clipart.js"></script>
+
+    <script src="../assets/js/select2/select2.full.min.js"></script>
+    <script src="../assets/js/select2/select2-custom.js"></script>
+    <script type="text/javascript">
+
+       
+
+        $(".teamHeadPlaceHolder").select2({
+            placeholder: "Select Team Head "
+        });
+        $(".teamEmployeesPlaceHolder").select2({
+            placeholder: "Select Team Employees "
+        });
+
+        $(document).ready(function () {
+          
+            var companyddl = $('#company');
+            var departmentddl = $('#department');
+            var employeeHeadddl = $('#employeeHead');
+            var employeeddl = $('#employee'); 
+            $.ajax({
+                type: "post",
+                url: "/Teams/GetCompanies",
+                datatype: "json",
+                traditional: true,
+                success: function (data) {   //data is the json response from server
+
+                    companyddl.append($('<option/>', { value: -1, text: '--Select Company--' }));
+                    departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                   // employeeHeadddl.append($('<option/>', { value: -1, text: '--Select Team Heads--' }));
+                   // employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+
+                    departmentddl.prop('disabled', true);
+                 //   employeeHeadddl.prop('disabled', true);
+                   // employeeddl.prop('disabled', true);
+
+
+                    $(data).each(function (index, item) {
+                        companyddl.append($('<option/>', { value: item.value, text: item.text }));
+                    });
+                }
+            });
+
+            companyddl.change(function () {
+
+
+                if ($(this).val() == "-1")   //if the selected value is -1(means no value selected)
+                {
+                    departmentddl.empty();
+                    departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                    departmentddl.val('-1');
+                    departmentddl.prop('disabled', true);
+                }
+                else {
+                    $.ajax({
+                        type: "post",
+                        url: "/Teams/GetDepartmentsByCompanyId",
+                        data: { Companyid: $(this).val() },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+
+
+                            departmentddl.empty(); //empty already existing values
+                            departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                            departmentddl.prop('disabled', false);
+
+                            $(data).each(function (index, item) {
+                                departmentddl.append($('<option/>', { value: item.value, text: item.text }));
+                            });
+                        }
+                    });
+                }
+            });
+
+            departmentddl.change(function () {
+
+
+                if ($(this).val() == "-1")   //if the selected value is -1(means no value selected)
+                {
+                    employeeHeadddl.empty();
+                  //  employeeHeadddl.append($('<option/>', { value: -1, text: '--Select Team Heads--' }));
+                    employeeHeadddl.val('-1');
+                    employeeHeadddl.prop('disabled', true);
+
+                    employeeddl.empty();
+                  //  employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+                    employeeddl.val('-1');
+                    employeeddl.prop('disabled', true);
+                }
+                else {
+                    $.ajax({
+                        type: "post",
+                        url: "/Teams/GetEmployeesByDepartmentId",
+                        data: { DepartmentId: $(this).val() },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+
+
+                            employeeHeadddl.empty(); //empty already existing values
+                          //  employeeHeadddl.append($('<option/>', { value: -1, text: '--Select Team Heads--' }));
+                            employeeHeadddl.prop('disabled', false);
+
+                            employeeddl.empty(); //empty already existing values
+                          //  employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+                            employeeddl.prop('disabled', false);
+
+                            $(data).each(function (index, item) {
+
+                                employeeHeadddl.append($('<option/>', { value: item.value, text: item.text }));
+                                employeeddl.append($('<option/>', { value: item.value, text: item.text }));
+
+                            });
+                        }
+                    });
+                }
+            });
+
+
+        });
+    </script>
+
+}

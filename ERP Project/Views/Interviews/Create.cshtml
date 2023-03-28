@@ -1,0 +1,231 @@
+﻿@model ERP_Project.Models.View_Models.InterviewViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+<script>
+    function myFunction() {
+        var x = document.getElementById("interview");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+</script>
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+            </div>
+            <div class="col-6">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Applicant Details</h3>
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">Name:<b>@ViewBag.applicant.Name</b></div>
+                        <div Class="col-6">Phone:<b>@ViewBag.applicant.Phone</b></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">Email:<b>@ViewBag.applicant.Email</b></div>
+                        <div Class="col-6">Portal:<b>@ViewBag.applicant.Portal</b></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">InterViewDate:<b>@Convert.ToString(string.Format("{0: d MMMM yyyy}", ViewBag.applicant.InterViewDate)) </b></div>
+                        <div Class="col-6">Job:<b>@ViewBag.applicant.Application.Title</b></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">AplicantStatus:<b>@ViewBag.applicant.AplicantStatus</b></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form theme-form">
+                        <div class="row">
+                            <div class="col-4"><h4>Remarks:</h4></div>
+                            <div class="col-4"></div>
+                            <div class="col-4" style="text-align:right">
+                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" data-toggle="modal" onclick="Selectedid(@ViewBag.id)" data-target="#adminRemarks"><i class="fa fa-plus "></i>&nbsp; Add Remarks</a>
+
+                            </div>
+                        </div>
+
+                        @foreach (var item in ViewBag.myRemarksList)
+
+                        {
+                            <div class="row">
+                                <div Class="col-4"><br />@item.Remarks</div>
+                            </div>
+                            <hr />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3>Interviews Status</h3>
+                        </div>
+                        <div class="col-6">
+                            <button style="float:right" class="btn btn-primary" onclick="myFunction()">Add</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Rechedule Date</th>
+                                    <th>Interview Status</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var interview in Model.Interviews)
+                                {
+                                    <tr>
+                                        <td>@Convert.ToString(string.Format("{0: d MMMM yyyy}", interview.ReScheduleDate))</td>
+                                        <td>@interview.InterviewStatus</td>
+                                        <td>@interview.Remarks</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr>
+                    <div class="form theme-form">
+                        <form asp-action="Create" method="post" id="interview" style="display:none">
+                            <h4>Add Interview</h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Interview.InterviewStatus" class="control-label"></label>
+                                        <select asp-for="Interview.InterviewStatus" id="select1" class="form-control">
+                                            <option selected disabled>---Select Status---</option>
+                                            <option>Reschedule</option>
+                                            <option>Selected</option>
+                                            <option>Pending</option>
+                                            <option>Rejected</option>
+                                            <option>In Process</option>
+                                            <option>Optional</option>
+                                            <option>Interview Scheduled</option>
+                                            <option>Not Responding</option>
+                                            <option>Need Followup</option>
+                                            <option>Future Hiring</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Interview.Remarks" class="control-label"></label>
+                                        <input asp-for="Interview.Remarks" class="form-control" />
+                                        <span asp-validation-for="Interview.Remarks" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Interview.ReScheduleDate" class="control-label"></label>
+                                        <input asp-for="Interview.ReScheduleDate" class="form-control" />
+                                        <span style="color:red">Use only If interview Reschedule</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                               @* <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="Interview.EmployeeId" class="control-label"></label>
+                                        <select asp-for="Interview.EmployeeId" class="form-control" asp-items="ViewBag.EmployeeId"></select>
+                                    </div>
+                                </div>*@
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <input type="hidden" asp-for="Interview.ApplicantId" value="@ViewBag.applicant.ApplicantsId">
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col">
+                                    <input type="submit" value="Add" class="btn btn-success mr-3" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="adminRemarks" tabindex="-1" role="dialog" aria-labelledby="adminRemarks" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Admin Remarks</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1" style="color:red;">Remarks:</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="exampleFormControlTextarea1"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <form asp-action="AddRemarks">
+                    @Html.Hidden("id", 0)
+                    @Html.Hidden("remarks", 0)
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+
+                    <button class="btn btn-primary" type="submit" onclick="SelectedRemarks()">Add</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+}
+<script type="text/javascript">
+
+    function SelectedRemarks(obj) {
+        document.getElementById('remarks').value = document.getElementById('exampleFormControlTextarea1').value;
+        return false;
+    }
+    function Selectedid(obj) {
+        document.getElementById('id').value = obj;
+        return false;
+    }
+</script>

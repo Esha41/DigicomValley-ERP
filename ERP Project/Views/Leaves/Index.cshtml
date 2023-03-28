@@ -1,0 +1,155 @@
+﻿@model IEnumerable<ERP_Project.Models.Leaves>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display" id="basic-1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Employee
+                                    </th>
+                                    <th>
+                                        LeaveType
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.From)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.To)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.NumofDays)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Reason)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Employee.FullName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.LeavesCategory.Name)
+                                        </td>
+                                        <td>
+                                            @Convert.ToString(string.Format("{0: d MMM yyyy}", item.From))
+                                        </td>
+                                        <td>
+                                            @Convert.ToString(string.Format("{0: d MMM yyyy}", item.To))
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.NumofDays)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Reason)
+                                        </td>
+                                        <td>
+                                            @if (item.Status == "Pending")
+                                            {<select id="select1" onchange="ChangeLeaveStatus(this,@item.LeavesId)" style="height:30px; border-radius:10px;">
+                                                    <option value="Approved">Approved</option>
+                                                    <option value="Pending" selected>Pending</option>
+                                                    <option value="Declined">Declined</option>
+                                                </select>
+                                            }
+                                            else if (item.Status == "Approved")
+                                            {
+                                                <select id="select1" onchange="ChangeLeaveStatus(this,@item.LeavesId)" style="height:30px; border-radius:10px;">
+                                                    <option value="Approved" selected>Approved</option>
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Declined">Declined</option>
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                <select id="select1" onchange="ChangeLeaveStatus(this,@item.LeavesId)" style="height:30px; border-radius:10px;">
+                                                    <option value="Approved">Approved</option>
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Declined" selected>Declined</option>
+                                                </select>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.LeavesId"><i class="icon-pencil" style="font-size:23px;color:blue;"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.LeavesId"><i class="icon-trash" style="font-size:23px;color:red;"></i></a><br />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>
+                                        Employee
+                                    </th>
+                                    <th>
+                                        LeaveType
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.From)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.To)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.NumofDays)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Reason)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        function ChangeLeaveStatus(val,id) {
+            var Status = val.value;
+            $.ajax({
+                type: "Post",
+                url: '/Leaves/ChangeLeaveStatus',
+                data: {
+                    id: id,
+                    Status: Status
+                },
+                success: function (json) {
+                    if (json == "Success") {
+                      
+                        window.location.reload();
+                    }
+
+                },
+                error: function (xhr) {
+                
+                }
+            });
+        }
+
+    </script>
+
+}

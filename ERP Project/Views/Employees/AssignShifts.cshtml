@@ -1,0 +1,389 @@
+﻿@model ERP_Project.Models.View_Models.ShiftAssignVM
+@{
+    ViewData["Title"] = "AssignShifts";
+}
+
+@section Css {
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/select2.css">
+}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Employee Create
+                </h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="~/">                                       <i data-feather="home"></i></a>
+                    </li>
+                    <li class="breadcrumb-item">Apps</li>
+                    <li class="breadcrumb-item active"> Employee Shifts Assign                        </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewBag.IsCustomShift)
+{
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Previous Shift</h5><span>Employee's previously made<code>Custom</code> Shift.</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+
+                            <th scope="col">Day</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">Max Start Time</th>
+                            <th scope="col">Break Time</th>
+                            <th scope="col">End Time</th>
+                            <th scope="col">Min End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.PrevTimming)
+                        {
+
+                            <tr>
+                                <th scope="row">@item.Day</th>
+                                <td>@item.StartTime.ToLongTimeString()</td>
+                                <td>@item.MaxStartTime.ToLongTimeString()</td>
+                                <td>@item.BreakTime min</td>
+                                <td>@item.EndTime.ToLongTimeString()</td>
+                                <td>@item.MinEndTime.ToLongTimeString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+}
+
+
+
+@if (ViewBag.IsOfficialShift)
+{
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Previously Shift</h5><span>Employee's previously made<code>Official</code> Shift.</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+
+                            <th scope="col">Day</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">Max Start Time</th>
+                            <th scope="col">Break Time</th>
+                            <th scope="col">End Time</th>
+                            <th scope="col">Min End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OfficialTimming)
+                        {
+
+                            <tr>
+                                <th scope="row">@item.Day</th>
+                                <td>@item.StartTime.ToLongTimeString()</td>
+                                <td>@item.MaxStartTime.ToLongTimeString()</td>
+                                <td>@item.BreakTime min</td>
+                                <td>@item.EndTime.ToLongTimeString()</td>
+                                <td>@item.MinEndTime.ToLongTimeString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+}
+<div class="container-fluid">
+
+    <form asp-action="AssignShift1" class="form theme-form">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    Personal Information
+                                </h3>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div @*class="form theme-form"*@>
+                            <input asp-for="assignShift.EmployeeId" value="@Model.employee.EmployeeId" required class="form-control" type="hidden">
+                            @if (Model.assignShift != null)
+                            {
+                                <input asp-for="assignShift.AssignShiftsId" value="@Model.assignShift.AssignShiftsId" required class="form-control" type="hidden">
+                            }
+                            <input asp-for="shiftType" required class="form-control" type="hidden">
+                            <input name="id" value="@Model.employee.EmployeeId" required class="form-control" type="hidden">
+                            <div class="row">
+                                <div class="col">
+                                    <di class="form-group">
+                                        <label>Employee Name</label>
+                                        <input readonly asp-for="employee.FullName" required class="form-control" type="text">
+                                        <span asp-validation-for="employee.FullName" class="text-danger"></span>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Employee Email</label>
+                                        <input readonly class="form-control" asp-for="employee.Email" type="text">
+                                        <span asp-validation-for="employee.Email" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>Company</label>
+                                    <input readonly class="form-control" asp-for="employee.Company.CompanyName" type="text">
+                                    <span asp-validation-for="employee.Company.CompanyId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>Position</label>
+                                    <input readonly class="form-control" asp-for="position" type="text">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>Department</label>
+                                    <input readonly class="form-control" asp-for="employee.Department.DepartmentName" type="text">
+
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label>Designation</label>
+                                    <input readonly class="form-control" asp-for="employee.Department_Designation.DesignationName" type="text">
+
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    Shift Information
+                                </h3>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div @*class="form theme-form"*@>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>Shift Type</label>
+                                        <div id="dllDesignation">
+                                            <select required asp-for="assignShift.ShiftId" class="form-control" asp-items="ViewBag.ShiftId">
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="assignShift.ShiftId" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+                                @*<div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Shift Type</label>
+                                            <select asp-for="assignShift.ShiftId" required class="form-control" id="ddlCompany" asp-items="ViewBag.CompanyId">
+                                            </select>
+                                            <span asp-validation-for="assignShift.ShiftId" class="text-danger"></span>
+                                        </div>
+                                    </div>*@
+                                @if (Model.shiftType == "custom")
+                                {
+                                    <div class="col-sm-12">
+                                        <div class="" id="ShiftForm">
+                                            <div class="row clearfix">
+
+                                                <div class="col-sm-2">
+                                                    <div class="form-group">
+                                                        <label> Day </label>
+                                                        <select name="Timming[0].Day" class="form-control">
+
+                                                            <option value="Monday">
+                                                                Monday
+                                                            </option>
+                                                            <option value="Tuesday">
+                                                                Tuesday
+                                                            </option>
+                                                            <option value="Wednesday">
+                                                                Wednesday
+                                                            </option>
+                                                            <option value="Thursday">
+                                                                Thursday
+                                                            </option>
+                                                            <option value="Friday">
+                                                                Friday
+                                                            </option>
+                                                            <option value="Saturday">
+                                                                Saturday
+                                                            </option>
+                                                            <option value="Sunday">
+                                                                Sunday
+                                                            </option>
+                                                        </select>
+                                                        @* <input readonly type="text" name="Timming[0].Day" value="Monday" class="form-control" />*@
+                                                        <span class="field-validation-valid text-danger" data-valmsg-for="Timming[0].Day" data-valmsg-replace="true"></span>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="form-group">
+                                                        <label> Start Time </label>
+                                                        <input required type="time" name="Timming[0].StartTime" value="" class="form-control" />
+                                                        <span class="field-validation-valid text-danger" data-valmsg-for="Timming[0].StartTime" data-valmsg-replace="true"></span>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="form-group">
+                                                        <label>Max Start Time </label>
+                                                        <input required type="time" name="Timming[0].MaxStartTime" value="" class="form-control" />
+                                                        <span class="field-validation-valid text-danger" data-valmsg-for="Timming[0].MaxStartTime" data-valmsg-replace="true"></span>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="form-group">
+                                                        <label> Break Time </label>
+                                                        <input required type="number" placeholder="min" name="Timming[0].BreakTime" value="" class="form-control" />
+                                                        <span class="field-validation-valid text-danger" data-valmsg-for="Timming[0].BreakTime" data-valmsg-replace="true"></span>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="form-group">
+                                                        <label> End Time </label>
+                                                        <input required type="time" name="Timming[0].EndTime" value="" class="form-control" />
+                                                        <span class="field-validation-valid text-danger" data-valmsg-for="Timming[0].EndTime" data-valmsg-replace="true"></span>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-2">
+                                                    <div class="form-group">
+                                                        <label>Min End Time </label>
+                                                        <input required type="time" name="Timming[0].MinEndTime" value="" class="form-control" />
+                                                        <span class="field-validation-valid text-danger" data-valmsg-for="Timming[0].MinEndTime" data-valmsg-replace="true"></span>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="col-sm-12">
+                                            <input type="button" class="btn btn-success btn-round" value="Add New" onclick="DynamicForm()">
+                                            <input type="button" class="btn btn-danger btn-round" onclick="RemoveForm()" value="Remove" />
+                                            @*<button type="submit" class="btn btn-default btn-round btn-simple">Cancel</button>*@
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group mb-0">
+                    <button type="submit" class="btn btn-success mr-3">Save</button>
+                    <button asp-action="Index" class="btn btn-danger">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+
+    var i = 0;
+    var b = 1;
+    daysInWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    function DynamicForm() {
+        if (b < 7) {
+            nearByDiv = document.getElementById('ShiftForm');
+            var e = nearByDiv.children;
+            var length = e.length;
+
+            i = length;
+            var currentDay = daysInWeek[b];
+            var newdiv = document.createElement('DIV');
+            newdiv.className = 'row clearfix';
+            var newForm1 = '<div class="col-sm-2"> <div class="form-group" ><label> Days  </label><select name="Timming[' + i + '].Day"  class="form-control"><option value = "Monday" >Monday</option ><option value="Tuesday">Tuesday</option><option value="Wednesday">Wednesday</option><option value="Thursday">Thursday</option><option value="Friday">Friday</option><option value="Saturday ">Saturday </option><option value="Sunday">Sunday</option></select ></div></div>';
+            //  var newForm1 = '<div class="col-sm-2"> <div class="form-group" ><label> Day : </label> <input readonly type="text" required name="Timming[' + i + '].Day" value="' + currentDay + '" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="Timming[' + i + '].Day" data-valmsg-replace="true"></span></div></div>';
+            var newForm2 = '<div class="col-sm-2"> <div class="form-group" ><label> Start Time : </label> <input required type="time" required name="Timming[' + i + '].StartTime" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="Timming[' + i + '].StartTime" data-valmsg-replace="true"></span></div></div>';
+            var newForm3 = '<div class="col-sm-2"> <div class="form-group" ><label>Max Start Time :</label> <input required type="time" required name="Timming[' + i + '].MaxStartTime" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="Timming[' + i + '].MaxStartTime" data-valmsg-replace="true"></span></div></div>';
+            var newForm4 = '<div class="col-sm-2"> <div class="form-group" ><label>Break Time :</label> <input required type="number" placeholder="min" required name="Timming[' + i + '].BreakTime" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="Timming[' + i + '].BreakTime" data-valmsg-replace="true"></span></div></div>';
+            var newForm5 = '<div class="col-sm-2"> <div class="form-group" ><label>  End Time : </label> <input  type="time" required name="Timming[' + i + '].EndTime" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="Timming[' + i + '].EndTime" data-valmsg-replace="true"></span></div></div>';
+            var newForm6 = '<div class="col-sm-2"> <div class="form-group" ><label>Min End Time : </label> <input  type="time" required name="Timming[' + i + '].MinEndTime" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="Timming[' + i + '].MinEndTime" data-valmsg-replace="true"></span></div></div>';
+            b = length + 1;
+            var completeForm = newForm1 + newForm2 + newForm3 + newForm4 + newForm5 + newForm6 + "<br />";
+            newdiv.innerHTML = completeForm;
+            nearByDiv.appendChild(newdiv);
+        }
+    }
+    function RemoveForm() {
+        var nearByDiv = document.getElementById('ShiftForm');
+        document.getElementById('ShiftForm').removeChild(nearByDiv.lastChild);
+    }
+
+
+</script>

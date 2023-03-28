@@ -1,0 +1,162 @@
+﻿@model ERP_Project.Models.ViewModel.AttendanceVM
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h4>Unapproved Checkout Requests</h4>
+            </div>
+            <div class="col-4 ">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display" id="basic-1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Employee Name
+                                    </th>
+                                    <th>
+                                        Designation
+                                    </th>
+                                    <th>
+                                        Reason
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+
+                                   
+                                        <th>
+                                            Approved By
+                                        </th>
+                                    
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @{ if (Model.unapprovedcheckouts != null)
+                                    {
+          @foreach (var item in Model.unapprovedcheckouts)
+          {
+                                <tr>
+
+                                    <td>
+                                        @item.EmployeeTimeRecords.Employee.FullName
+                                    </td>
+
+                                    <td>
+                                        @item.EmployeeTimeRecords.Employee.Department_Designation.DesignationName
+                                    </td>
+                                    <td>
+                                        <button class="example-popover btn btn-success text-center" type="button" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="top" data-offset="0px" data-content="@item.EmployeeTimeRecords.UserRemarks">Popover here</button>
+                                        @* <button  class="btn btn-success text-center" type="button" rel="comments" title="@item.EmployeeTimeRecords.UserRemarks">awesome user</button>
+                                        *@
+                                    </td>
+                                    <td>
+                                        @Convert.ToString(string.Format("{0: d MMMM yyyy}", @item.EmployeeTimeRecords.Date))
+
+                                    </td>
+                                    <td>
+                                        @if (item.ApprovalStatus == "approved")
+                                        {<div style="color:green">Approved</div> }
+                                        else if (item.ApprovalStatus == "declined")
+                                        { <div style="color:red">Declined</div>}
+                                        else
+                                        { <div style="color:darkblue">Pending</div>}
+                                    </td>
+                                 
+
+                                    <td>
+                                        @{var name = "";
+                                        }
+                                        @if (Model.users.Any(a => a.Id == item.ReferenceUserId.ToString()))
+                                        {
+                                            var email = Model.users.FirstOrDefault(a => a.Id == item.ReferenceUserId.ToString()).Email;
+                                            if (!Model.AllEmployees.Any(a => a.Email == email))
+                                            {
+                                                name = "Admin";
+                                            }
+                                            else
+                                            {
+
+                                                name = Model.AllEmployees.FirstOrDefault(a => a.Email == email).FullName;
+                                            }
+                                        }
+                                        @name
+                                    </td>
+                                    
+                                        <td>
+                                            @if (item.ApprovalStatus == "approved")
+                                            {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" onclick="@("window.location.href='" + @Url.Action("ApprovalCheckoutRequestPost", "Attendance", new { id = item.EmployeeTimeRecordId, status = 0 }) + "'");"><i class="fa fa-fw" aria-hidden="true" title="Click For Declined"></i></a> }
+                                            else if (item.ApprovalStatus == "declined")
+                                            {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" onclick="@("window.location.href='" + @Url.Action("ApprovalCheckoutRequestPost", "Attendance", new { id = item.EmployeeTimeRecordId, status = 1 }) + "'");"><i class="fa fa-fw" aria-hidden="true" title="Click For Approval"></i></a>}
+                                            else
+                                            {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-info" onclick="@("window.location.href='" + @Url.Action("ApprovalCheckoutRequestPost", "Attendance", new { id = item.EmployeeTimeRecordId, status = 1 }) + "'");"><i class="fa fa-fw" aria-hidden="true" title="Click For Approval"></i></a>}
+
+                                        </td>
+                                    
+                                </tr>
+          }
+                                        }
+                                    }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+
+                                    <th>
+                                        Employee Name
+                                    </th>
+                                    <th>
+                                        Designation
+                                    </th>
+                                    <th>
+                                        Reason
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+                                 
+                                        <th>
+                                            Approved By
+                                        </th>
+                                    
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/js/bootstrap/popper.min.js"></script>
+    <script src="~/assets/js/popover-custom.js"></script>
+
+@*    <script src="~/assets/js/button-tooltip-custom.js"></script>*@
+    <script src="~/js/Toggle.js"></script>
+}

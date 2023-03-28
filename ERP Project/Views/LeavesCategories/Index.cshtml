@@ -1,0 +1,130 @@
+﻿@model IEnumerable<ERP_Project.Models.LeavesCategory>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@*<h1>Index</h1>
+
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.LeavesCategoryId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.LeavesCategoryId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.LeavesCategoryId">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>*@
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Leaves Category</h3>
+            </div>
+            <div class="col-4 ">
+            </div>
+            <div class="col-2 ">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display" id="basic-1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @if (item.Status == true)
+                                            {<div style="color:green">Active</div> }
+                                            else
+                                            { <div style="color:red">Deactive</div>}
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.LeavesCategoryId"><i class="icon-pencil" style="font-size:23px;color:blue;"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.LeavesCategoryId"><i class="icon-trash" style="font-size:23px;color:red;"></i></a><br />
+                                            @if (item.Status == true)
+                                            {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" onclick="ChangeLeavesCategoriesStatus(@item.LeavesCategoryId)"><i class="fa fa-fw" aria-hidden="true" title="Click For Offline"></i></a> }
+                                            else
+                                            { <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" onclick="ChangeLeavesCategoriesStatus(@item.LeavesCategoryId)"><i class="fa fa-fw" aria-hidden="true" title="Click For online"></i></a>}
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Name)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script src="~/js/Toggle.js"></script>
+}

@@ -1,0 +1,148 @@
+﻿@model IEnumerable<ERP_Project.Models.Applications>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Applications</h3>
+            </div>
+            <div class="col-4 ">
+            </div>
+            <div class="col-2 ">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            @foreach (var item in Model)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <a style=" text-decoration: underline; font-weight: bold;" asp-action="GetApplicants" asp-controller="Applications" asp-route-id="@item.ApplicationId">@Html.DisplayFor(modelItem => item.Title)</a><br/>
+                                Created:  @Convert.ToString(string.Format("{0: d MMMM yyyy}", item.PostDate))
+                            </div>
+                            <div class="col-3">
+                                @Html.DisplayFor(modelItem => item.Discription)
+                            </div>
+                            <div class="col-3">
+                                @Html.DisplayFor(modelItem => item.ApplicationStatus)
+                            </div>
+                            <div class="col-3">
+                                <a asp-action="Edit" asp-route-id="@item.ApplicationId"><i class="icon-pencil" style="font-size:23px;color:blue;"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.ApplicationId"><i class="icon-trash" style="font-size:23px;color:red;"></i></a>
+                                @if (item.Status == true)
+                                {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" onclick="ChangeApplicationsStatus(@item.ApplicationId)"><i class="fa fa-fw" aria-hidden="true" title="Click For Offline"></i></a> }
+                                else
+                                { <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" onclick="ChangeApplicationsStatus(@item.ApplicationId)"><i class="fa fa-fw" aria-hidden="true" title="Click For online"></i></a>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/Toggle.js"></script>
+}
+
+
+
+@*<div class="table-responsive">
+        <table class="display" id="basic-1">
+            <thead>
+                <tr>
+                    <th>
+                       Application
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Discription)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PostDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Company)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Designation)
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="GetApplicants" asp-controller="Applications" asp-route-id="@item.ApplicationId">@Html.DisplayFor(modelItem => item.Title)</a>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Discription)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PostDate)
+                        </td>
+                        <td>
+                            @if (item.Status == true)
+                            {<div style="color:green">Active</div> }
+                            else
+                            { <div style="color:red">Deactive</div>}
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Company.CompanyId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Designation.Department_DesignationsId)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ApplicationId"><i class="icon-pencil" style="font-size:23px;color:blue;"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.ApplicationId"><i class="icon-trash" style="font-size:23px;color:red;"></i></a><br />
+                            @if (item.Status == true)
+                            {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" onclick="ChangeApplicationsStatus(@item.ApplicationId)"><i class="fa fa-fw" aria-hidden="true" title="Click For Offline"></i></a> }
+                            else
+                            { <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" onclick="ChangeApplicationsStatus(@item.ApplicationId)"><i class="fa fa-fw" aria-hidden="true" title="Click For online"></i></a>}
+                        </td>
+                    </tr>
+
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>
+                        Application
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Discription)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PostDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Company)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Designation)
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>*@

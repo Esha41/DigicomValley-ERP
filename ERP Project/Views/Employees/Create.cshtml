@@ -1,0 +1,1060 @@
+﻿@model ERP_Project.Models.View_Models.EmployeeVM
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+@section Css {
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/select2.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
+}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Employee Create
+                </h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">                                       <i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Apps</li>
+                    <li class="breadcrumb-item active"> Employee Create                          </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <form asp-action="create" class="form theme-form wizard-horizontal" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    Personal Information
+                                </h3>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div @*class="form theme-form"*@>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <fieldset class="form-group">
+                                        <label asp-for="employee.Image">Employee Photo</label>
+                                        <div class="custom-file">
+                                            <input required name="employeephoto" type="file" onchange="document.getElementById('showEmployeePhotoId').src = window.URL.createObjectURL(this.files[0]);" class="custom-file-input" id="inputGroupFile01" />
+                                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <div class="col-sm-6 ">
+                                    <img src="~/Images/ChooseImage.jpg" id="showEmployeePhotoId" class="float-right" style="width:240px; height:150px;" />
+                                </div>
+
+                                <input type="hidden" class="form-control" id="showEmployeePhotoId" asp-for="employee.Image" />
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Employee Name</label>
+                                        <input asp-for="employee.FullName" required class="form-control" type="text" placeholder="Enter Employee's full name *">
+                                        <span asp-validation-for="employee.FullName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Employee Email</label>
+                                        <input required class="form-control" asp-for="employee.Email" type="text" placeholder="Enter Employee's Email *">
+                                        <span asp-validation-for="employee.Email" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Employee Password</label>
+                                        @* <input class="form-control" asp-for="employee.DateOfBirth" type="text" placeholder="Enter Employee's DOB *">*@
+                                        <input required class="form-control" asp-for="employee.Password" type="password">
+
+                                        @*  <span asp-validation-for="password" class="text-danger"></span>*@
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Employee CNIC</label>
+                                        <input required class="form-control" asp-for="employee.CNIC" type="text" placeholder="Enter Employee's CNIC *">
+                                        <span asp-validation-for="employee.CNIC" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Employee Phone Number(Home)</label>
+                                        <input required class="form-control" asp-for="employee.HomeContactNo" type="text" placeholder=" Phone Number (Home) *">
+                                        <span asp-validation-for="employee.HomeContactNo" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Employee Mobile/Personal Number </label>
+                                        <input required class="form-control" asp-for="employee.MobileContactNo" type="text" placeholder=" Phone Number (Mobile/Personal) *">
+                                        <span asp-validation-for="employee.MobileContactNo" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                         @*   <br />
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label>Employee of :</label>
+                                        <select required asp-for="employee.EmployeeOf" asp-items="ViewBag.DepHeads">
+                                        </select>
+                                    </div>
+
+                                </div>
+                                </div>
+                            <br />*@
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Current Address</label>
+                                            <textarea required asp-for="employee.CurrentAddress" class="form-control" type="text" placeholder="Enter Employee's Current Address" rows="3"></textarea>
+                                            <span asp-validation-for="employee.CurrentAddress" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Permanent Address</label>
+                                            <textarea asp-for="employee.PermanentAddress" class="form-control" type="text" placeholder="Enter Employee's Permanent Address" rows="3"></textarea>
+                                            <span asp-validation-for="employee.PermanentAddress" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                @*    <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Project Rate</label>
+                        <input required class="form-control" type="text" placeholder="Enter project Rate">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Project Type</label>
+                        <select class="form-control">
+                            <option>Hourly</option>
+                            <option>Fix price</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select class="form-control">
+                            <option>Low</option>
+                            <option>Medium</option>
+                            <option>High</option>
+                            <option>Urgent</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Project Size</label>
+                        <select class="form-control">
+                            <option>Small</option>
+                            <option>Medium</option>
+                            <option>Big</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Starting date</label>
+                        <input required class="datepicker-here form-control" type="text" data-language="en">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>Ending date</label>
+                        <input required class="datepicker-here form-control" type="text" data-language="en">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>Enter some Details</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea4" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label>Upload project file</label>
+                        <form class="dropzone" id="singleFileUpload" action="/upload.php">
+                            <div class="dz-message needsclick">
+                                <i class="icon-cloud-up"></i>
+                                <h6>Drop files here or click to upload.</h6><span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>*@
+
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    Professional Information
+                                </h3>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div @*class="form theme-form"*@>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>Company</label>
+                                        <select asp-for="employee.CompanyId" required class="form-control" id="ddlCompany" asp-items="ViewBag.CompanyId">
+                                            <option>Please select one</option>
+                                        </select>
+                                        <span asp-validation-for="employee.CompanyId" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Department</label>
+                                        <div id="ddlDepartment1">
+                                            <select disabled="disabled" required asp-for="employee.DepartmentId" class="form-control" id="ddlDepartment" asp-items="ViewBag.DepartmentId">
+                                                <option>Please select one</option>
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="employee.DepartmentId" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Designation</label>
+                                        <div id="dllDesignation">
+                                            <select disabled required asp-for="employee.Department_DesignationsId" class="form-control" asp-items="ViewBag.Department_DesignationsId">
+                                                <option>Please select one</option>
+                                            </select>
+                                        </div>
+                                        <span asp-validation-for="employee.Department_DesignationsId" class="text-danger"></span>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label>Job Duration</label>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <label>Start Date</label>
+                                                <input required class="datepicker-here form-control" asp-for="position.StartDate" type="text" data-language="en" data-multiple-dates-separator=", " data-position="bottom left" placeholder="Job start date" data-original-title="" title="">
+                                             @*   <span asp-validation-for="position.StartDate" class="text-danger"></span>*@
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label>End Date</label>
+                                                <input required class="datepicker-here form-control" asp-for="position.EndDate" type="text" data-language="en" data-multiple-dates-separator=", " data-position="bottom left" placeholder="Job end date" data-original-title="" title="">
+                                             @*   <span asp-validation-for="position.EndDate" class="text-danger"></span>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Joining Position</label>
+                                        <select asp-for="position.PositionType" class="form-control">
+                                            <option value="Internship">Internship</option>
+                                            <option value="Job">Job</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Employee Salary</label>
+                                        <input required asp-for="position.Salary" class="form-control" type="text" placeholder="Enter Employee's Salary *">
+                                        <span asp-validation-for="position.Salary" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Is the job paid or unpaid?</label>
+                                        <br />
+                                        @Html.RadioButtonFor(m => m.position.IsPaid, true)&nbsp;PAID&nbsp;&nbsp;
+
+                                        @Html.RadioButtonFor(m => m.position.IsPaid, false)&nbsp;UNPAID
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Is the job office based or not?</label>
+                                        <br />
+                                        @Html.RadioButtonFor(m => m.employee.IsAttendanceIPbased, true)&nbsp;OFFICE BASED&nbsp;&nbsp;
+
+                                        @Html.RadioButtonFor(m => m.employee.IsAttendanceIPbased, false)&nbsp;NOT OFFICE BASED
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            @*    <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Project Rate</label>
+                                            <input required class="form-control" type="text" placeholder="Enter project Rate">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Project Type</label>
+                                            <select class="form-control">
+                                                <option>Hourly</option>
+                                                <option>Fix price</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Priority</label>
+                                            <select class="form-control">
+                                                <option>Low</option>
+                                                <option>Medium</option>
+                                                <option>High</option>
+                                                <option>Urgent</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Project Size</label>
+                                            <select class="form-control">
+                                                <option>Small</option>
+                                                <option>Medium</option>
+                                                <option>Big</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Starting date</label>
+                                            <input required class="datepicker-here form-control" type="text" data-language="en">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>Ending date</label>
+                                            <input required class="datepicker-here form-control" type="text" data-language="en">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Enter some Details</label>
+                                            <textarea class="form-control" id="exampleFormControlTextarea4" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label>Upload project file</label>
+                                            <form class="dropzone" id="singleFileUpload" action="/upload.php">
+                                                <div class="dz-message needsclick">
+                                                    <i class="icon-cloud-up"></i>
+                                                    <h6>Drop files here or click to upload.</h6><span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>*@
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    Emergency Contacts
+                                </h3>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div @*class="form theme-form"*@>
+                            <div class="row">
+
+
+                                <div class="col-sm-12">
+                                    <h5>Primary Contact</h5>
+
+                                </div>
+                                <input asp-for="PrimaryRelations.Type" value="primary" class="form-control" type="hidden" placeholder="Enter Name *">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input asp-for="PrimaryRelations.PersonName" class="form-control" type="text" placeholder="Enter Name *">
+                                        <span asp-validation-for="PrimaryRelations.PersonName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Relationship</label>
+                                        <input asp-for="PrimaryRelations.RelationshipName" class="form-control" type="text" placeholder="Enter Relationship *">
+                                        <span asp-validation-for="PrimaryRelations.RelationshipName" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Contact</label>
+                                        <input asp-for="PrimaryRelations.PersonContactNo" class="form-control" type="text" placeholder="Enter Contact Number *">
+                                        <span asp-validation-for="PrimaryRelations.PersonContactNo" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+
+                                <div class="col-sm-12">
+                                    <h5>Secondary Contact</h5>
+
+                                </div>
+                                <input asp-for="SecondaryRelations.Type" value="secondary" class="form-control" type="hidden" placeholder="Enter Name *">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Name</label>
+                                        <input asp-for="SecondaryRelations.PersonName" class="form-control" type="text" placeholder="Enter Name *">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Relationship</label>
+                                        <input class="form-control" asp-for="SecondaryRelations.RelationshipName" type="text" placeholder="Enter Relationship *">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Contact</label>
+                                        <input class="form-control" type="text" asp-for="SecondaryRelations.PersonContactNo" placeholder="Enter Contact Number *">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    Education<small>(Most Recent First)</small>
+                                </h3>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div @*class="form theme-form"*@>
+                            <div class="col-sm-12">
+                                <div class="" id="EducationForm">
+                                    <div class="row clearfix">
+
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label> Level </label>
+                                                <input required type="text" name="education[0].EducationLevel" value="" class="form-control" />
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="education[0].EducationLevel" data-valmsg-replace="true"></span>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label> Institute Name </label>
+                                                <input required type="text" name="education[0].InstitutionName" value="" class="form-control" />
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="education[0].InstitutionName" data-valmsg-replace="true"></span>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label> Degree </label>
+                                                <input required type="text" name="education[0].Degree" value="" class="form-control" />
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="education[0].Degree" data-valmsg-replace="true"></span>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label> Period </label>
+
+                                                <input required class="datepicker-here form-control" name="education[0].DateFrom" type="text" data-language="en" data-multiple-dates-separator=", " data-position="bottom left" placeholder="From" data-original-title="" title="">
+
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="education[0].DateFrom" data-valmsg-replace="true"></span>
+                                                <input required class="datepicker-here form-control" name="education[0].DateTo" type="text" data-language="en" data-multiple-dates-separator=", " data-position="bottom left" placeholder="To" data-original-title="" title="">
+
+                                                <span class="field-validation-valid text-danger" data-valmsg-for="education[0].DateTo" data-valmsg-replace="true"></span>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="col-sm-12">
+                                    <input type="button" class="btn btn-success btn-round" value="Add New" onclick="DynamicForm()">
+                                    <input type="button" class="btn btn-danger btn-round" onclick="RemoveForm()" value="Remove" />
+                                    @*<button type="submit" class="btn btn-default btn-round btn-simple">Cancel</button>*@
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    Work Experience<small>(Last 3 Years Only)</small>
+                                </h3>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div @*class="form theme-form"*@>
+                            <div class="row">
+
+
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Company Name</label>
+                                        <input class="form-control" asp-for="employeeExperience.CompanyName" type="text" placeholder="Enter Company Name *">
+                                        <span asp-validation-for="employeeExperience.CompanyName" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Position</label>
+                                        <input class="form-control" asp-for="employeeExperience.Position" type="text" placeholder="Enter Position *">
+                                        <span asp-validation-for="employeeExperience.Position" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Salary</label>
+                                        <input class="form-control" asp-for="employeeExperience.Salary" type="text" placeholder="Enter Salary *">
+                                        <span asp-validation-for="employeeExperience.Salary" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>Period</label>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                @*   @{
+            Model.employeeExperience.DateFrom = DateTime.Now;
+        }*@
+                                                <label>From</label>
+                                                <input class="datepicker-here form-control" value="@DateTime.Now" asp-for="employeeExperience.DateFrom" type="text" data-language="en" data-multiple-dates-separator=", " data-position="bottom left" placeholder="From" data-original-title="" title="">
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                @*      @{
+            Model.employeeExperience.DateTo = DateTime.Now;
+        }*@
+                                                @* <input required class="form-control" type="date" placeholder="Enter Relationship *">*@
+                                                <label>To</label>
+                                                <input class="datepicker-here form-control" value="@DateTime.Now" type="text" data-language="en" asp-for="employeeExperience.DateTo" data-multiple-dates-separator=", " data-position="bottom left" placeholder="To" data-original-title="" title="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Reason for Leaving</label>
+                                        <textarea class="form-control" asp-for="employeeExperience.ReasonForLeaving" rows="3" type="text" placeholder="Enter Reason *"></textarea>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <hr />
+                            <div class="row">
+
+
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Company Name</label>
+                                        <input class="form-control" asp-for="employeeExperience1.CompanyName" type="text" placeholder="Enter Company Name *">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Position</label>
+                                        <input class="form-control" asp-for="employeeExperience1.Position" type="text" placeholder="Enter Position *">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Salary</label>
+                                        <input class="form-control" type="text" asp-for="employeeExperience1.Salary" placeholder="Enter Salary *">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>Period</label>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                @*        @{
+            Model.employeeExperience1.DateFrom = DateTime.Now;
+        }*@
+                                                <label>From</label>
+                                                <input required class="datepicker-here form-control"  value="@DateTime.Now" type="text" asp-for="employeeExperience1.DateFrom" data-language="en" data-multiple-dates-separator=", " data-position="bottom left" placeholder="From" data-original-title="" title="">
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                @*  @{
+            Model.employeeExperience1.DateTo = DateTime.Now;
+        }*@
+                                                @* <input required class="form-control" type="date" placeholder="Enter Relationship *">*@
+                                                <label>To</label>
+                                                <input required class="datepicker-here form-control" value="@DateTime.Now" type="text" data-language="en" asp-for="employeeExperience1.DateTo" data-multiple-dates-separator=", " data-position="bottom left" placeholder="To" data-original-title="" title="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Reason for Leaving</label>
+                                        <textarea class="form-control" asp-for="employeeExperience1.ReasonForLeaving" rows="3" type="text" placeholder="Enter Reason *"></textarea>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <hr />
+                            <div class="row">
+
+
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Company Name</label>
+                                        <input class="form-control" asp-for="employeeExperience2.CompanyName" type="text" placeholder="Enter Company Name *">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Position</label>
+                                        <input class="form-control" asp-for="employeeExperience2.Position" type="text" placeholder="Enter Position *">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>Salary</label>
+                                        <input class="form-control" type="text" asp-for="employeeExperience2.Salary" placeholder="Enter Salary *">
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>Period</label>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                @*   @{
+            Model.employeeExperience2.DateFrom = DateTime.Now;
+        }*@
+                                                <label>From</label>
+                                                <input required class="datepicker-here form-control" asp-for="employeeExperience2.DateFrom" value="@DateTime.Now" type="text" data-language="en" data-multiple-dates-separator=", " data-position="bottom left" placeholder="From" data-original-title="" title="">
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                              @*  @{
+                                                    Model.employeeExperience2.DateTo = DateTime.Now;
+                                                }*@
+                                                @* <input required class="form-control" type="date" placeholder="Enter Relationship *">*@
+                                                <label>To</label>
+                                                <input required class="datepicker-here form-control" asp-for="employeeExperience2.DateTo" value="@DateTime.Now" type="text" data-language="en" data-multiple-dates-separator=", " data-position="bottom left" placeholder="To" data-original-title="" title="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Reason for Leaving</label>
+                                        <textarea class="form-control" rows="3" type="text" asp-for="employeeExperience2.ReasonForLeaving" placeholder="Enter Reason *"></textarea>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <hr />
+                            @*<div class="row">
+                                    <div class="col-sm-8">
+                                        <p>May we contact employee's previous supervisor for refrence</p>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        @Html.RadioButton("ApproveForContact", true)&nbsp;YES&nbsp;&nbsp;
+
+                                        @Html.RadioButton("ApproveForContact", false)&nbsp;NO
+
+                                    </div>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    Major Skills
+                                </h3>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div @*class="form theme-form"*@>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <div class="container-fluid">
+                                            <div class="select2-drpdwn">
+                                                <div class="row">
+                                                    <!-- Default Textbox start-->
+                                                    <div class="col-md-12">
+
+                                                        <div class="mb-2">
+                                                            <div class="col-form-label">Select this employee's skills:</div>
+                                                            <select class="js-example-basic-multiple col-sm-12" asp-for="SkillsId" asp-items="ViewBag.SkillsId" multiple="multiple">
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                @* <div class="col-sm-12">
+                                        <div class="form-group">
+
+
+
+                                            <div class="mb-2">
+                                                <select class="js-example-placeholder-multiple col-sm-12" multiple="multiple" asp-for="SkillsId" asp-items="ViewBag.SkillsId">
+                                                    <option value="1">abc</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>*@
+
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    References
+                                </h3>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div @*class="form theme-form"*@>
+                            <div class="row">
+                                <div class="col-sm-12" style="background-color:gray">
+                                    <h5>Please list two professional refrences</h5>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Full Name</label>
+                                            <input  asp-for="employeeReferences.FullName" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Relationship</label>
+                                            <input  asp-for="employeeReferences.Relationship" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Company</label>
+                                            <input  class="form-control" asp-for="employeeReferences.CompanyName" type="text">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Phone</label>
+                                            <input  class="form-control" asp-for="employeeReferences.ContactNo" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Address</label>
+                                            <textarea class="form-control" rows="3" type="text" asp-for="employeeReferences.Address"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Full Name</label>
+                                            <input asp-for="employeeReferences1.FullName" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Relationship</label>
+                                            <input asp-for="employeeReferences1.Relationship" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Company</label>
+                                            <input asp-for="employeeReferences1.CompanyName" class="form-control" type="text">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Phone</label>
+                                            <input asp-for="employeeReferences1.ContactNo" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Address</label>
+                                            <textarea class="form-control" asp-for="employeeReferences1.Address" rows="3" type="text"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group mb-0"><button type="submit" class="btn btn-success mr-3">Add</button><button type="reset" class="btn btn-danger">Cancel</button></div>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- Container-fluid Ends-->
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/assets/js/select2/select2.full.min.js"></script>
+    <script src="~/assets/js/select2/select2-custom.js"></script>
+    <script src="~/assets/js/tooltip-init.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#ddlDepartment1').change(function () {
+
+                $.ajax({
+                    type: "post",
+                    url: "/Employees/GetDesignations",
+                    data: { id: $('#ddlDepartment').val() },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        // debugger;
+                        var district = "<select class='form-control' id='ddlArea' name='employee.Department_DesignationsId' required = 'required'>";
+                        district = district + '<option>Please select one</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            district = district + '<option value="' + data[i].value + '">' + data[i].text + '</option>';
+                        }
+                        district = district + '</select>';
+                        $('#dllDesignation').html(district);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#ddlCompany').change(function () {
+
+                $.ajax({
+                    type: "post",
+                    url: "/Employees/GetDepartments",
+                    data: { id: $('#ddlCompany').val() },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        // debugger;
+                        var district = "<select class='form-control' id='ddlDepartment' asp-for='employee.DepartmentId' name='employee.DepartmentId' required = 'required'>";
+                        district = district + '<option>Please select one</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            district = district + '<option value="' + data[i].value + '">' + data[i].text + '</option>';
+                        }
+                        district = district + '</select>';
+                        $('#ddlDepartment1').html(district);
+                    }
+                });
+            });
+        });
+    </script>
+
+}
+<script>
+
+    var i = 0;
+    function DynamicForm() {
+        nearByDiv = document.getElementById('EducationForm');
+        var e = nearByDiv.children;
+        var length = e.length;
+
+        i = length;
+        var newdiv = document.createElement('DIV');
+        newdiv.className = 'row clearfix';
+        var newForm1 = '<div class="col-sm-3"> <div class="form-group" ><label> Level : </label> <input  type="text" required name="education[' + i + '].EducationLevel" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="education[' + i + '].EducationLevel" data-valmsg-replace="true"></span></div></div>';
+        var newForm2 = '<div class="col-sm-3"> <div class="form-group" ><label> Institute Name : </label> <input required type="text" required name="education[' + i + '].InstitutionName" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="education[' + i + '].InstitutionName" data-valmsg-replace="true"></span></div></div>';
+        var newForm3 = '<div class="col-sm-3"> <div class="form-group" ><label> Degree : </label> <input  type="text" required name="education[' + i + '].Degree" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="education[' + i + '].Degree" data-valmsg-replace="true"></span></div></div>';
+        var newForm4 = '<div class="col-sm-3"> <div class="form-group" ><label> Period : </label> <input type="date" required name="education[' + i + '].DateFrom" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="education[' + i + '].DateFrom" data-valmsg-replace="true"></span><input type="date" required name="education[' + i + '].DateTo" value="" class="form-control" /><span class="field-validation-valid text-danger" data-valmsg-for="education[' + i + '].DateTo" data-valmsg-replace="true"></span></div></div>';
+        var completeForm = newForm1 + newForm2 + newForm3 + newForm4 + "<br />";
+        newdiv.innerHTML = completeForm;
+        nearByDiv.appendChild(newdiv);
+    }
+    function RemoveForm() {
+        var nearByDiv = document.getElementById('EducationForm');
+        document.getElementById('EducationForm').removeChild(nearByDiv.lastChild);
+    }
+
+
+</script>
+
+
+
+
+
+
+
+

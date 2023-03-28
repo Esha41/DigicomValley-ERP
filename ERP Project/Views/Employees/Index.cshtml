@@ -1,0 +1,533 @@
+﻿@model ERP_Project.Models.View_Models.EmployeeVM
+
+@{
+    ViewData["Title"] = "Index";
+
+}
+
+@section Css{
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/simple-line-icon.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/icofont.css">
+
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-3">
+                <h3>Employees</h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">                                       <i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Apps</li>
+                    <li class="breadcrumb-item active"> List                         </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="stepwizard" style="margin-right">
+    <div class="stepwizard-row setup-panel">
+            <div class="stepwizard-step">
+                <a class="btn btn-primary" href="#Current-emp">Current Employees</a>
+            </div>
+            <div class="stepwizard-step">
+                <a class="btn btn-light" href="#Past-emp">Past Employees</a>
+            </div>
+     
+    </div>
+</div>
+
+<div class="setup-content" id="Current-emp">
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="display" id="basic-1">
+                                <thead class="text-center">
+                                    <tr>
+
+                                        <th>Photo</th>
+                                        <th>Name</th>
+                                        @if (!User.IsInRole("TeamHead"))
+                                        {
+                                            <th>Email</th>
+                                            <th>Password</th>
+                                        }
+                                        <th>Company</th>
+                                        <th>Department</th>
+                                        <th>Designation</th>
+                                        <th>Job Type</th>
+                                        <th>Status</th>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <th>Employee of</th>
+                                        }
+                                        <th>Action</th>
+
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @{ var count1 = 0;}
+                                    @{ foreach (var item in Model.employees)
+                                        {
+                                            if (item.Status == true)
+                                            {
+                                                int empId2 = item.EmployeeId;
+                                                var depName = "";
+                                                var title = "";
+                                                if (Model.depHeadsList.Any(a => a.EmployeeId == item.EmployeeId && a.HeadType == "Department"))
+                                                {
+                                                    var headid = Model.depHeadsList.FirstOrDefault(a => a.EmployeeId == item.EmployeeId && a.HeadType == "Department").HeadId;
+                                                    depName = Model.department.FirstOrDefault(a => a.DepartmentId == headid).DepartmentName;
+                                                    title = "Department Head";
+                                                }
+                                                else if (Model.depHeadsList.Any(a => a.EmployeeId == item.EmployeeId && a.HeadType == "Team"))
+                                                {
+                                                    var teamid = Model.depHeadsList.FirstOrDefault(a => a.EmployeeId == item.EmployeeId && a.HeadType == "Team").HeadId;
+                                                    depName = Model.departmentTeams.FirstOrDefault(a => a.DepartmentTeamsId == teamid).TeamName;
+                                                    title = depName + " Team Head";
+                                                }
+                                                else if ((item.Department_Designation.DesignationName == "HR Manager") || (item.Department_Designation.DesignationName == "Junior HR Manager") || (item.Department_Designation.DesignationName == "HR Intern"))
+                                                {
+                                                    title = "HR Manager";
+                                                }
+                                                else if (item.Department_Designation.DesignationName == "Project Manager")
+                                                {
+                                                    title = "Project Manager";
+                                                }
+
+                                                else
+                                                {
+                                                    title = "";
+                                                }
+                                                                        <tr>
+                                                                            <td>
+                                                                                <img src="~/Images/Employee/@item.Image" class="img-100 img-fluid m-r-20 rounded-circle update_img_0" style="width:100px; height:100px;" />
+                                                                            </td>
+                                                                            <td>
+                                                                                <p style="color:red">@title</p>
+                                                                                @item.FullName
+
+                                                                            </td>
+                                                                            @if (!User.IsInRole("TeamHead"))
+                                                                            {
+                                                                                <td>@item.Email</td>
+                                                                                <td>@item.Password</td>
+                                                                            }
+                                                                            <td>@item.Company.CompanyName</td>
+                                                                            <td>@item.Department.DepartmentName</td>
+                                                                            <td>@item.Department_Designation.DesignationName</td>
+                                                                            <td>
+                                                                                @{
+                                                                                    var type = false;
+                                                                                    var jobType = "";
+                                                                                    if (Model.employeePositions.Any(a => a.EmployeeId == item.EmployeeId))
+                                                                                    {
+                                                                                        type = Model.employeePositions.Where(a => a.EmployeeId == item.EmployeeId).FirstOrDefault().IsPaid;
+                                                                                        if (type == false)
+                                                                                        {
+                                                                                            jobType = "Unpaid";
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            jobType = "Paid";
+                                                                                        }
+                                                                                    }
+                                                                                    @jobType
+                                                                                }
+                                                                            </td>
+                                                                            @if (item.Status == true)
+                                                                            {
+                                                                                <td class="text-success py-1">Active</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td class="text-danger py-1">Deactive</td>
+                                                                            }
+                                                                            @if (User.IsInRole("Admin"))
+                                                                            {
+                                                                                <td class="text-primary py-1">@item.EmployeeOf</td>
+                                                                            }
+                                                                            <td class="text-center">
+                                                                                @if (!User.IsInRole("TeamHead"))
+                                                                                {
+                                                                                    <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.EmployeeId"><i class="icon-pencil" title="Click to open Employee Edit Form"></i></a>
+
+                                                                                    <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-info" data-toggle="modal" onclick="SelectedId(@item.EmployeeId)" data-target="#ShiftAssignModal"><i class="icon-time" title="Click to open Employee Shift Assign Form"> </i></a>
+
+                                                                                    @*   @if (item.Status == true)
+                {
+                    <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" asp-action="ChangeStatus" asp-route-id="@item.EmployeeId"><i class="icon-power" title="Click For Offline"></i></a>
+                }
+                else
+                { <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" asp-action="ChangeStatus" asp-route-id="@item.EmployeeId"><i class="icon-power-off" title="Click For Online"></i></a>
+
+                }*@
+                                                                                    <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-dark" asp-action="JobExtend" asp-route-id="@item.EmployeeId"><i class="icon-control-forward" title="Click to open Job Extend Form"> </i></a>
+                                                                                    @if (!User.IsInRole("HRManager"))
+                                                                                    {
+                                                                                        <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" data-toggle="modal" onclick="SelectedId(@item.EmployeeId)" data-target="#empDeletemodal" title="Click For Delete"><i class="icon-trash"></i></a>
+                                                                                    }
+                                                                                }
+                                                                                @if (item.Status == true)
+                                                                                {
+                                                                                    @if ((User.IsInRole("DepartmentHead")) || (User.IsInRole("Admin")))
+                                                                                    {
+                                                                                        <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" data-toggle="modal" data-target="#ChngStatus_@count1" @* asp-action="ChangeStatus" asp-route-id="@item.EmployeeId"*@><i class="icon-power" title="Click For Offline"></i></a>
+
+                                                                                        <form asp-action="Index">
+                                                                                            <input hidden asp-for="@empId2" />
+                                                                                            <div class="modal fade" id="ChngStatus_@count1" tabindex="-1" role="dialog" aria-labelledby="ChngStatus_@count1" aria-hidden="true">
+                                                                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                                                    <div class="modal-content">
+                                                                                                        <div class="modal-header">
+                                                                                                            <h5 class="modal-title">Remarks</h5>
+                                                                                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                                                                        </div>
+                                                                                                        <div class="modal-body">
+                                                                                                            <div class="form-group">
+                                                                                                                <label for="exampleFormControlTextarea1" style="color:red;">Kindly give the Reason to deactivate an employee's account:</label>
+                                                                                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="RemarksToChngStatus"></textarea>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div class="modal-footer">
+                                                                                                            <button class="btn btn-primary" type="submit" onsubmit="submitted()">Submit</button>
+                                                                                                            <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </form>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" asp-action="ChangeStatus" asp-route-id="@item.EmployeeId"><i class="icon-power-off" title="Click For Offline"></i></a>
+
+                                                                                    }
+
+                                                                                }
+                                                                                else
+                                                                                { <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" asp-action="ChangeStatus" asp-route-id="@item.EmployeeId"><i class="icon-power-off" title="Click For Online"></i></a>
+
+
+                                                                                }
+                                                                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-warning" asp-action="Details" asp-route-id="@item.EmployeeId" title="Click For Employee Details"><i class="icon-comment-alt"></i></a>
+
+
+
+                                                                            </td>
+
+                                                                        </tr>
+                                                count1 = count1 + 1;
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="setup-content" id="Past-emp">
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="display" id="basic-1">
+                                <thead class="text-center">
+                                    <tr>
+
+                                        <th>Photo</th>
+                                        <th>Name</th>
+                                        @if (!User.IsInRole("TeamHead"))
+                                        {
+                                            <th>Email</th>
+                                            <th>Password</th>
+                                        }
+                                        <th>Company</th>
+                                        <th>Department</th>
+                                        <th>Designation</th>
+                                        <th>Job Type</th>
+                                        <th>Status</th>
+
+                                        <th>Action</th>
+
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @{ var count2 = 0;}
+                                    @{ foreach (var item in Model.employees)
+                                        {
+                                            if (item.Status == false)
+                                            {
+                                                int empId2 = item.EmployeeId;
+                                                var depName = "";
+                                                var title = "";
+                                                if (Model.depHeadsList.Any(a => a.EmployeeId == item.EmployeeId && a.HeadType == "Department"))
+                                                {
+                                                    var headid = Model.depHeadsList.FirstOrDefault(a => a.EmployeeId == item.EmployeeId && a.HeadType == "Department").HeadId;
+                                                    depName = Model.department.FirstOrDefault(a => a.DepartmentId == headid).DepartmentName;
+                                                    title = "Department Head";
+                                                }
+                                                else if (Model.depHeadsList.Any(a => a.EmployeeId == item.EmployeeId && a.HeadType == "Team"))
+                                                {
+                                                    var teamid = Model.depHeadsList.FirstOrDefault(a => a.EmployeeId == item.EmployeeId && a.HeadType == "Team").HeadId;
+                                                    depName = Model.departmentTeams.FirstOrDefault(a => a.DepartmentTeamsId == teamid).TeamName;
+                                                    title = depName + " Team Head";
+                                                }
+                                                else if ((item.Department_Designation.DesignationName == "HR Manager") || (item.Department_Designation.DesignationName == "Junior HR Manager") || (item.Department_Designation.DesignationName == "HR Intern"))
+                                                {
+                                                    title = "HR Manager";
+                                                }
+                                                else if (item.Department_Designation.DesignationName == "Project Manager")
+                                                {
+                                                    title = "Project Manager";
+                                                }
+
+                                                else
+                                                {
+                                                    title = "";
+                                                }
+                                                <tr>
+                                                    <td>
+                                                        <img src="~/Images/Employee/@item.Image" class="img-100 img-fluid m-r-20 rounded-circle update_img_0" style="width:100px; height:100px;" />
+                                                    </td>
+                                                    <td>
+                                                        <p style="color:red">@title</p>
+                                                        @item.FullName
+
+                                                    </td>
+                                                    @if (!User.IsInRole("TeamHead"))
+                                                    {
+                                                        <td>@item.Email</td>
+                                                        <td>@item.Password</td>
+                                                    }
+                                                    <td>@item.Company.CompanyName</td>
+                                                    <td>@item.Department.DepartmentName</td>
+                                                    <td>@item.Department_Designation.DesignationName</td>
+                                                    <td>
+                                                        @{
+                                                            var type = false;
+                                                            var jobType = "";
+                                                            if (Model.employeePositions.Any(a => a.EmployeeId == item.EmployeeId))
+                                                            {
+                                                                type = Model.employeePositions.Where(a => a.EmployeeId == item.EmployeeId).FirstOrDefault().IsPaid;
+                                                                if (type == false)
+                                                                {
+                                                                    jobType = "Unpaid";
+                                                                }
+                                                                else
+                                                                {
+                                                                    jobType = "Paid";
+                                                                }
+                                                            }
+                                                            @jobType
+                                                        }
+                                                    </td>
+                                                    @if (item.Status == true)
+                                                    {
+                                                        <td class="text-success py-1">Active</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td class="text-danger py-1">Deactive</td>
+                                                    }
+
+                                                    <td class="text-center">
+                                                        @if (!User.IsInRole("TeamHead"))
+                                                        {
+                                                            @if (!User.IsInRole("HRManager"))
+                                                            {
+                                                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" data-toggle="modal" onclick="SelectedId(@item.EmployeeId)" data-target="#empDeletemodal" title="Click For Delete"><i class="icon-trash"></i></a>
+                                                            }
+                                                        }
+                                                        @if (item.Status == true)
+                                                        {
+                                                            @if ((User.IsInRole("DepartmentHead")) || (User.IsInRole("Admin")))
+                                                            {
+                                                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" data-toggle="modal" data-target="#ChngStatus_@count2" @* asp-action="ChangeStatus" asp-route-id="@item.EmployeeId"*@><i class="icon-power" title="Click For Offline"></i></a>
+
+                                                                <form asp-action="Index">
+                                                                    <input hidden asp-for="@empId2" />
+                                                                    <div class="modal fade" id="ChngStatus_@count2" tabindex="-1" role="dialog" aria-labelledby="ChngStatus_@count2" aria-hidden="true">
+                                                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h5 class="modal-title">Remarks</h5>
+                                                                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <div class="form-group">
+                                                                                        <label for="exampleFormControlTextarea1" style="color:red;">Kindly give the Reason to deactivate an employee's account:</label>
+                                                                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="RemarksToChngStatus"></textarea>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="modal-footer">
+                                                                                    <button class="btn btn-primary" type="submit" onsubmit="submitted()">Submit</button>
+                                                                                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" asp-action="ChangeStatus" asp-route-id="@item.EmployeeId"><i class="icon-power-off" title="Click For Offline"></i></a>
+
+                                                            }
+
+                                                        }
+                                                        else
+                                                        { <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" asp-action="ChangeStatus" asp-route-id="@item.EmployeeId"><i class="icon-power-off" title="Click For Online"></i></a>
+
+
+                                                        }
+                                                        <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-warning" asp-action="Details" asp-route-id="@item.EmployeeId" title="Click For Employee Details"><i class="icon-comment-alt"></i></a>
+
+
+
+                                                    </td>
+
+                                                </tr>
+                                                count2 = count2 + 1;
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--delete modal-->
+
+<div class="modal fade" id="ShiftAssignModal" tabindex="-1" role="dialog" aria-labelledby="ShiftAssignModal" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Shifts</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+
+                    <div class="form-group">
+
+                        <h5>Choose the type of shift you'd like to assign this employee.</h5>
+
+                    </div>
+
+                </form>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form asp-action="AssignShifts" class="form theme-form">
+                            @Html.Hidden("empid", 0)
+                            <div class="row">
+                                <div class="col-sm-6" style="text-align:right">
+
+                                    @Html.Hidden("shiftType", "")
+                                    <button class="btn btn-primary" type="submit" onclick="shiftTypeSet('custom')">
+                                        Custom Shift
+                                    </button>
+
+                                </div>
+                                <div class="col-sm-6" style="text-align:left">
+
+
+                                    <button class="btn btn-primary" type="submit" onclick="shiftTypeSet('official')">
+                                        Official Shift
+                                    </button>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                @* <a class="btn btn-primary" type="button" asp-action="Delete" asp-route="@Model.DepartmentsList.FirstOrDefault().DepartmentId">Delete</a>*@
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--employee delete modal-->
+<div class="modal fade" id="empDeletemodal" tabindex="-1" role="dialog" aria-labelledby="empDeletemodal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color:red;">Are you sure you want to delete this?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <em>Deleting an employee will also delete Employee Shifts, Attendance and Leaves Record!</em>
+            </div>
+            <div class="modal-footer">
+                <form asp-action="Delete">
+                    @Html.Hidden("id", 0)
+                    <button class="btn btn-primary " type="submit">Yes</button>
+                    @*   onclick="@("window.location.href='" + @Url.Action("Delete", "Employees",new{id=empId }) + "'");"*@
+                </form>
+                <button class="btn btn-danger" type="button" data-dismiss="modal" ty>No</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section DeptTeamsjs{
+    <script src="~/assets/js/datatable/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/datatables/datatable.custom.js"></script>
+
+    <script src="~/assets/js/icons/icons-notify.js"></script>
+    <script src="~/assets/js/icons/icon-clipart.js"></script>
+
+    <script src="~/assets/js/form-wizard/form-wizard-two.js"></script>
+
+    <script src="~/assets/js/theme-customizer/customizer.js"></script>
+
+
+}
+
+
+<script type="text/javascript">
+
+
+    function SelectedId(obj) {
+        this.empId = obj;
+        document.getElementById('empid').value = obj;
+        document.getElementById('id').value = obj;
+        return false;
+    }
+    function shiftTypeSet(obj) {
+        this.empId = obj;
+        document.getElementById('shiftType').value = obj;
+        return false;
+    }
+
+</script>
+

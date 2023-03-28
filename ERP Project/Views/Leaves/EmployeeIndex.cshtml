@@ -1,0 +1,104 @@
+﻿@model IEnumerable<ERP_Project.Models.Leaves>
+
+@{
+    ViewData["Title"] = "EmployeeLeaves";
+}
+<br />
+<h4>Leaves Record</h4><br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display" id="basic-1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        LeaveType
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.From)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.To)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.NumofDays)
+                                    </th>
+                                    <th>
+                                       ApplyDate
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Reason)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.LeavesCategory.Name)
+                                        </td>
+                                        <td>
+                                            @Convert.ToString(string.Format("{0: d MMM yyyy}", item.From))
+                                        </td>
+                                        <td>
+                                            @Convert.ToString(string.Format("{0: d MMM yyyy}", item.To))
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.NumofDays)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Date)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Reason)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </td>
+                                        <td>
+                                            <a asp-action="Delete" asp-route-id="@item.LeavesId"><i class="icon-trash" style="font-size:23px;color:red;"></i></a><br />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>
+                                        LeaveType
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.From)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.To)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.NumofDays)
+                                    </th>
+                                    <th>
+                                        ApplyDate
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Reason)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

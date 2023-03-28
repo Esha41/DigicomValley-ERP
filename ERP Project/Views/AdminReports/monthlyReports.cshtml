@@ -1,0 +1,431 @@
+﻿@model ERP_Project.Models.ViewModel.ReportsVM
+@{
+    ViewData["Title"] = "EmployeeReports";
+
+}
+@section DeptTeamsjscss{
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/scrollable.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/prism.css">
+}
+@{
+    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time");
+    var dateTimeConverter = TimeZoneInfo.ConvertTime(DateTime.Now, tz);
+
+}
+<br />
+<h4>Employee Monthly Reports</h4>
+<br />
+@{ var empId = 0;}
+<form asp-action="monthlyReports">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+
+                <div class="form-group">
+                    <label asp-for="company">Select Company</label>
+                    <select class="form-control btn-square" id="company" asp-for="company.CompanyId">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+
+                <div class="form-group">
+                    <label asp-for="departments">Select Department</label>
+                    <select class="form-control btn-square" id="department" asp-for="departments.DepartmentId">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="employees">Select Employee </label>
+                <select class="form-control btn-square" id="employee" asp-for="employees.EmployeeId">
+                </select>
+            </div>
+
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label>Select Month</label>
+                <input class="datepicker-here form-control" type="text" data-language="en" data-min-view="months" data-view="months" data-date-format="MM" asp-for="getMonth" required>
+
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label>Enter Year</label>
+                <input class="form-control btn-square" asp-for="getYear" required>
+
+            </div>
+        </div>
+        <div class="col-sm-4" style="margin-top:27px">
+
+            <button type="submit" class="btn btn-primary form-control">
+                <i class="fa fa-search-plus">&nbsp;&nbsp;Search</i>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            @if (Model.employees != null)
+            {
+                <h5>Monthly Report</h5>
+            }
+        </div>
+    </div>
+
+</form>
+<br />
+
+@if (ViewBag.noCompSelect == true)
+{
+    <div class="col-sm-12 col-xl-12">
+        <div class="card height-equal">
+            <div class="card-body" style="padding-bottom:0px; padding-top: 0px; padding-right: 0px; padding-left: 0px;">
+
+                <div class="alert alert-secondary outline" role="alert">
+                    <h6><b>Kindly select all the fields in order to get specific employee record</b></h6>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+else if (Model.IsRecordExist == false)
+{
+    <div class="col-sm-12 col-xl-12">
+        <div class="card height-equal">
+            <div class="card-body" style="padding-bottom:0px; padding-top: 0px; padding-right: 0px; padding-left: 0px;">
+
+                <div class="alert alert-secondary outline" role="alert">
+                    <h6><b>No Record to show!</b></h6>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    //getting time record
+
+    //
+    @if (Model.employees != null)
+    {
+        <h5><em>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"@Model.employees.FullName   @Model.employees.Department_Designation.DesignationName"</em></h5>
+        <br />
+
+        <div class="col-sm-12 col-xl-12">
+            <div class="card height-equal">
+                <div class="card-body" style="padding-bottom:0px; padding-top: 0px; padding-right: 0px; padding-left: 0px;">
+
+                    <div class="alert alert-secondary outline" role="alert">
+                        <h6><b>Present : </b>@Model.presentsCount<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Leaves : </b>@Model.leavesCount<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Absents : </b>@Model.absentsCount<h6 />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+
+                    @foreach (var rep in Model.employeePerReport)
+                    {
+                        var oDate = new DateTime(Model.getYear, rep.Date.Month, rep.Date.Day);
+                        var item = Model.empTimeRecordCred.Where(x => x.Key.Date.Day == rep.Date.Day).FirstOrDefault();
+                        var checkinTime = "";
+                        var checkoutTime = "";
+                        var obj1 = item.FirstOrDefault(a => a.RecordTypeName == "checkin") == null ? null : item.FirstOrDefault(a => a.RecordTypeName == "checkin");
+                        var obj2 = item.FirstOrDefault(a => a.RecordTypeName == "checkout") == null ? null : item.FirstOrDefault(a => a.RecordTypeName == "checkout");
+
+                        if (obj1 == null)
+                        {
+                            checkinTime = null;
+                        }
+                        else
+                        {
+                            checkinTime = Convert.ToString(string.Format("{0:hh:mm tt}", obj1.RecordTime));
+                        }
+                        if (obj2 == null)
+                        {
+                            checkoutTime = null;
+                        }
+                        else
+                        {
+                            checkoutTime = Convert.ToString(string.Format("{0:hh:mm tt}", obj2.RecordTime));
+                        }
+                        //prod hours
+                        var rezult = 0.0;
+                        var rezultbrk = 0.0;
+                        var btd = 0.0;
+                        if (checkoutTime != null)
+                        {
+                            double brktym = Convert.ToDouble(Model.emporgBreakTime);
+                            double ok = brktym / 60.0;
+                            rezultbrk = System.Math.Round((ok), 1);
+                            var TimeRecord = Model.empTimingsList.Where(a => a.Day.Contains(Convert.ToString(oDate.DayOfWeek))).FirstOrDefault();
+                            var inTime = Convert.ToString(string.Format("{0:hh:mm tt}", TimeRecord.StartTime));
+                            var outTime = Convert.ToString(string.Format("{0:hh:mm tt}", TimeRecord.EndTime));
+
+                            double difference = Convert.ToDateTime(outTime).Subtract(Convert.ToDateTime(inTime)).TotalHours;
+                            rezult = System.Math.Round((difference), 1);
+                            rezult = rezult - rezultbrk;
+                            rezult = System.Math.Round((rezult), 1);
+                            if (rezult < 0)
+                            {
+                                rezult = 0;
+                            }
+                        }
+                        else
+                        {
+                            rezult = 0;
+                        }
+                        //WORKING HOURS var TotalTym = 0.0;
+                        var TotalTym = 0.0;
+                        int i = 0;
+                        var timein = "";
+                        // DateTime? temp=null;
+                        int countItm = item.Count();
+                        foreach (var calTym in item)
+                        {
+                            i++;
+                            if (i == 2 && calTym.RecordTypeName == "timeout" && checkoutTime != null)
+                            {
+                                var timeout = Convert.ToString(string.Format("{0:hh:mm tt}", calTym.RecordTime));
+                                TotalTym = Convert.ToDateTime(timeout).Subtract(Convert.ToDateTime(checkinTime)).TotalHours;
+
+                            }
+                            else if (calTym.RecordTypeName == "timein")
+                            {
+
+                                timein = Convert.ToString(string.Format("{0:hh:mm tt}", calTym.RecordTime));
+                            }
+                            else if (calTym.RecordTypeName == "timeout" && checkoutTime != null)
+                            {
+                                var timeout = Convert.ToString(string.Format("{0:hh:mm tt}", calTym.RecordTime));
+                                if (timein != "")
+                                {
+                                    TotalTym = TotalTym + Convert.ToDateTime(timeout).Subtract(Convert.ToDateTime(timein)).TotalHours;
+                                }
+                            }
+                            else if ((i == countItm) && (calTym.RecordTypeName == "checkout"))
+                            {
+                                if (checkoutTime != null)
+                                {
+                                    if (timein == "")
+                                    {
+                                        TotalTym = TotalTym + (Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(checkinTime)).TotalHours);
+
+                                    }
+                                    else
+                                    {
+                                        TotalTym = TotalTym + (Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(timein)).TotalHours);
+                                    }
+                                }
+                            }
+
+                        }
+                        var TotalTymF = System.Math.Round((TotalTym), 1);
+                        if (TotalTymF < 0)
+                        {
+                            TotalTymF = 0;
+                        }
+                        //over time
+                        DateTime? modelempExactEndTime = null;
+                        string modelempExactStartTime = null;
+                        if (Model.shiftType == "official")
+                        {
+                            modelempExactEndTime = Model.empExactEndTime;
+                            modelempExactStartTime = Model.emporgReportTime;
+                        }
+                        else if (Model.shiftType == "custom")
+                        {
+                            string x1 = item.FirstOrDefault(f => f.Date.ToString("dddd") != null).Date.ToString("dddd"); //getting day
+                            modelempExactEndTime = Model.empExactEndTime3.Where(a => a.Key.Contains(x1)).FirstOrDefault().Value;
+                            modelempExactStartTime = Model.emporgReportTime2.Where(a => a.Key.Contains(x1)).FirstOrDefault().Value;
+                        }
+
+
+                        var rezultOverTime = 0.0;
+                        var overtime = "";
+                        if (checkoutTime != null)
+                        {
+                            var endTym = Convert.ToString(string.Format("{0:hh:mm tt}", modelempExactEndTime));
+                            var strtTym = modelempExactStartTime;
+                            if (endTym != "" && strtTym != null)
+                            {
+                                double RepTymDiff = Convert.ToDateTime(endTym).Subtract(Convert.ToDateTime(strtTym)).TotalHours;
+                                double CIOTymDiff = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(checkinTime)).TotalHours;
+                                double diffOverTime = CIOTymDiff - RepTymDiff;
+
+                                // double diffOverTime = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(endTym)).TotalHours;
+                                rezultOverTime = System.Math.Round((diffOverTime), 1);
+                                if (diffOverTime > 0 && diffOverTime < 1)
+                                {
+                                    // diffOverTime = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(endTym)).TotalMinutes;
+                                    double RepTymDiff2 = Convert.ToDateTime(endTym).Subtract(Convert.ToDateTime(strtTym)).TotalMinutes;
+                                    double CIOTymDiff2 = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(checkinTime)).TotalMinutes;
+                                    double diffOverTime2 = CIOTymDiff2 - RepTymDiff2;
+
+                                    rezultOverTime = System.Math.Round((diffOverTime2), 1);
+                                    overtime = rezultOverTime + " mins";
+                                }
+
+                                else if (rezultOverTime <= 0)
+                                {
+                                    overtime = "0";
+                                }
+                                else
+                                {
+                                    overtime = Math.Abs(rezultOverTime) + " hrs";
+                                }
+                            }
+                            else
+                            {
+                                overtime = "0";
+                                checkoutTime = "checkout Missed";
+                            }
+
+                        }
+                        else
+                        {
+                            overtime = "0";
+                            checkoutTime = "Missed";
+                        }
+                    <div class="card">
+                        <div class="card-header" style="padding-bottom:15px; padding-top: 20px; padding-right: 10px; padding-left: 25px;"><h6><b>@rep.Date.ToString("dd-MMMM-yyyy")</b></h6></div>
+                        <div class="card-body" style="padding-bottom:20px; padding-top: 20px; padding-right: 10px; padding-left: 25px;">
+                            <p>@rep.ReportDescription</p>
+                        </div>
+                        <div class="card-header" style="padding-bottom:15px; padding-top: 20px; padding-right: 10px; padding-left: 25px;"><h6><b style="color:purple">Production hours :  @rezult &nbsp; &nbsp; &nbsp;| &nbsp; &nbsp; &nbsp; Working hours : @TotalTymF &nbsp; &nbsp; &nbsp;|  &nbsp;&nbsp; &nbsp; Over Time : @overtime&nbsp; &nbsp; &nbsp;|  &nbsp;&nbsp; &nbsp; Checkin : @checkinTime&nbsp; &nbsp; &nbsp;|  &nbsp;&nbsp; &nbsp; Checkout : @checkoutTime</b></h6></div>
+
+                    </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+}
+@section DeptTeamsjs{
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+    <script src="~/assets/js/dropzone/dropzone-script.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+
+    <script src="~/assets/js/scrollable/perfect-scrollbar.min.js"></script>
+    <script src="~/assets/js/scrollable/scrollable-custom.js"></script>
+
+    <script src="~/assets/js/prism/prism.min.js"></script>
+    <script src="~/assets/js/clipboard/clipboard.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+         
+            var companyddl = $('#company');
+            var departmentddl = $('#department');
+            var employeeddl = $('#employee');
+            $.ajax({
+                type: "post",
+                url: "/AdminReports/GetCompanies",
+                datatype: "json",
+                traditional: true,
+                success: function (data) {   //data is the json response from server
+
+                    companyddl.append($('<option/>', { value: -1, text: '--Select Company--' }));
+                    departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                    // employeeHeadddl.append($('<option/>', { value: -1, text: '--Select Team Heads--' }));
+                    // employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+
+                    departmentddl.prop('disabled', true);
+                    //   employeeHeadddl.prop('disabled', true);
+                    employeeddl.prop('disabled', true);
+
+
+                    $(data).each(function (index, item) {
+                        companyddl.append($('<option/>', { value: item.value, text: item.text }));
+                    });
+                }
+            });
+
+            companyddl.change(function () {
+         
+                if ($(this).val() == "-1")   //if the selected value is -1(means no value selected)
+                {
+                    departmentddl.empty();
+                    departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                    departmentddl.val('-1');
+                    departmentddl.prop('disabled', true);
+                }
+                else {
+                    $.ajax({
+                        type: "post",
+                        url: "/AdminReports/GetDepartmentsByCompanyId",
+                        data: { Companyid: $(this).val() },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+                         
+                            departmentddl.empty(); //empty already existing values
+                            departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                            departmentddl.prop('disabled', false);
+
+                            $(data).each(function (index, item) {
+                                departmentddl.append($('<option/>', { value: item.value, text: item.text }));
+                            });
+                        }
+                    });
+                }
+            });
+
+            departmentddl.change(function () {
+    
+                if ($(this).val() == "-1")   //if the selected value is -1(means no value selected)
+                {
+
+                    employeeddl.empty();
+                    //  employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+                    employeeddl.val('-1');
+                    employeeddl.prop('disabled', true);
+                }
+                else {
+                    $.ajax({
+                        type: "post",
+                        url: "/AdminReports/GetEmployeesByDepartmentId",
+                        data: { DepartmentId: $(this).val() },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+                            employeeddl.empty(); //empty already existing values
+                            //  employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+                            employeeddl.prop('disabled', false);
+
+                            $(data).each(function (index, item) {
+
+                                employeeddl.append($('<option/>', { value: item.value, text: item.text }));
+
+                            });
+                        }
+                    });
+                }
+            });
+
+
+        });
+
+        function SelectedId(obj) {
+ 
+            this.empId = obj;
+            //  document.getElementById('empid').value = obj;
+            return true;
+        }
+
+
+    </script>
+}

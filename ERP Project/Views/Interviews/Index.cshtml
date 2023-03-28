@@ -1,0 +1,166 @@
+﻿@model IEnumerable<ERP_Project.Models.Interview>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@*<h1>Index</h1>
+
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.InterviewDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Day)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Remarks)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Applicant)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Interviewer)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InterviewDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Day)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Remarks)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Applicant.ApplicantsId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Interviewer.Email)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.InterviewId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.InterviewId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.InterviewId">Delete</a>
+                </td>
+            </tr>
+    }
+        </tbody>
+    </table>*@
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Interviews</h3>
+            </div>
+            <div class="col-4 ">
+            </div>
+            <div class="col-2 ">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display" id="basic-1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.InterviewDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Remarks)
+                                    </th>
+                                    <th>
+                                        @*@Html.DisplayNameFor(model => model.Status)*@
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Applicant)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Interviewer)
+                                    </th>
+                                    <th>Actions</th>
+</thead>
+
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.InterviewDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Remarks)
+                                    </td>
+                                    <td>
+                                     @*   @Html.DisplayFor(modelItem => item.Status)*@
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Applicant.ApplicantsId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Interviewer.Email)
+                                    </td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.InterviewId"><i class="icon-pencil" style="font-size:23px;color:blue;"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@item.InterviewId"><i class="icon-trash" style="font-size:23px;color:red;"></i></a><br />
+                                    </td>
+                                </tr>
+
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.InterviewDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Remarks)
+                                    </th>
+                                    <th>
+                                       @* @Html.DisplayNameFor(model => model.Status)*@
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Applicant)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Interviewer)
+                                    </th>
+                                    <th>Actions</th>
+</tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

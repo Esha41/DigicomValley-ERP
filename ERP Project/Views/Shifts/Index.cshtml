@@ -1,0 +1,107 @@
+﻿@model IEnumerable<ERP_Project.Models.Shifts>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Shifts</h3>
+            </div>
+            <div class="col-4 ">
+            </div>
+            <div class="col-2 ">
+                <div class="row">
+
+                    <div class="btn-group">
+                        <a class="btn btn-pill btn-primary btn-lg" type="button" asp-controller="Shifts" asp-action="Create">Add</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="display" id="basic-1">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.ShiftName)
+                                    </th>
+                                    <th>
+                                      Company
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ShiftName)
+                                    </td>
+                                    <td>
+                                        @if (item.Company != null)
+                                        {
+                                        @Html.DisplayFor(modelItem => item.Company.CompanyName)
+                                        }
+                                        else
+                                        {
+                                            <p>N/A</p>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.Status == true)
+                                        {<div style="color:green">Active</div> }
+                                        else
+                                        { <div style="color:red">Deactive</div>}
+                                    </td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.ShiftId"><i class="icon-pencil" style="font-size:23px;color:blue;"></i></a>
+                                        <a asp-action="Delete" asp-route-id="@item.ShiftId"><i class="icon-trash" style="font-size:23px;color:red;"></i></a><br />
+                                        @if (item.Status == true)
+                                        {<a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-success" onclick="ChangeShiftStatus(@item.ShiftId)"><i class="fa fa-fw" aria-hidden="true" title="Click For Offline"></i></a> }
+                                        else
+                                        { <a class="mb-2 mr-2 btn-icon btn-icon-only btn-shadow btn-dashed btn btn-outline-danger" onclick="ChangeShiftStatus(@item.ShiftId)"><i class="fa fa-fw" aria-hidden="true" title="Click For online"></i></a>}
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.ShiftName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Status)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Toggle.js"></script>
+}

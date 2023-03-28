@@ -1,0 +1,454 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - ERP</title>
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,400i,500,500i,700,700i&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/fontawesome.css">
+    <!-- ico-font-->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/icofont.css">
+    <!-- Themify icon-->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/themify.css">
+    <!-- Flag icon-->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/flag-icon.css">
+    <!-- Feather icon-->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/feather-icon.css">
+    <!-- Plugins css start-->
+    @RenderSection("Css", required: false)
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/animate.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/chartist.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
+    @RenderSection("DeptTeamsjscss", required: false)
+    @*  @RenderSection("iconscss", required: false);
+        @RenderSection("selectcss", required: false);*@
+    <!-- Plugins css Ends-->
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/bootstrap.css">
+    <!-- App css-->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link id="color" rel="stylesheet" href="~/assets/css/color-1.css" media="screen">
+    <!-- Responsive css-->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/simple-line-icon.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/select2.css">
+</head>
+
+
+@*onload="startTime()"*@
+<body>
+    <!-- tap on top starts-->
+    <div class="tap-top"><i data-feather="chevrons-up"></i></div>
+    <!-- tap on tap ends-->
+    <!-- page-wrapper Start-->
+    <div class="page-wrapper compact-wrapper" id="pageWrapper">
+        <!-- Page Header Start-->
+        <!-- Page Header Start-->
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="page-header">
+                <div class="header-wrapper row m-0" style="padding-bottom: 8px;">
+                    <form class="form-inline search-full" action="#" method="get">
+                        <div class="form-group w-100">
+                            <div class="Typeahead Typeahead--twitterUsers">
+                                <div class="u-posRelative">
+                                    <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text" placeholder="Search Cuba .." name="q" title="" autofocus>
+                                    <div class="spinner-border Typeahead-spinner" role="status"><span class="sr-only">Loading...</span></div><i class="close-search" data-feather="x"></i>
+                                </div>
+                                <div class="Typeahead-menu"></div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="header-logo-wrapper">
+                        <div class="logo-wrapper"><a href="index.html"><img class="img-fluid" src="../assets/images/logo/logo.png" alt=""></a></div>
+                        <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="sliders"></i></div>
+                    </div>
+                    <div class="left-header col horizontal-wrapper pl-0">
+                        <ul class="horizontal-menu">
+                        </ul>
+                    </div>
+                    <div class="nav-right col-8 pull-right right-header p-0">
+                        <ul class="nav-menus">
+                            <li>
+                                <div class="mode"><i class="fa fa-moon-o"></i></div>
+                            </li>
+
+                            <li class="profile-nav p-0 mr-0">
+                                <div class="media profile-media">
+                                    <img class="b-r-10" src="~/assets/images/dashboard/profile.jpg" alt="">
+                                    <div class="media-body">
+                                        <span>@Context.User.Identity.Name</span>  <!--It just holds the username (identification of specific user)of the user that is currently logged in-->
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <p class="mb-0 font-roboto"><i class="middle fa fa-user-secret"></i> Admin </p>
+                                        }
+                                        @if (User.IsInRole("DepartmentHead"))
+                                        {
+                                            <p class="mb-0 font-roboto"><i class="middle fa fa-user-secret"></i> Department Head </p>
+                                        }
+                                        @if (User.IsInRole("TeamHead"))
+                                        {
+                                            <p class="mb-0 font-roboto"><i class="middle fa fa-user-secret"></i> Team Head </p>
+                                        }
+                                        @if (User.IsInRole("HRManager"))
+                                        {
+                                            <p class="mb-0 font-roboto"><i class="middle fa fa-user-secret"></i> HR Manager </p>
+                                        }
+                                        @if (User.IsInRole("ProjectManager"))
+                                        {
+                                            <p class="mb-0 font-roboto"><i class="middle fa fa-user-secret"></i> Project Manager </p>
+                                        }
+                                        @if (User.IsInRole("Employee"))
+                                        {
+                                            <p class="mb-0 font-roboto"><i class="middle fa fa-user-secret"></i> Employee </p>
+                                        }
+                                        @if (User.IsInRole("ManagingDirector"))
+                                        {
+                                            <p class="mb-0 font-roboto"><i class="middle fa fa-user-secret"></i> Managing Director </p>
+                                        }
+                                    </div>
+                                </div>
+
+                            </li>
+                            <li>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        <i class="fa fa-power-off"></i>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="/Identity/Account/Logout"><small class="text-black">&nbsp;&nbsp;Logout</small></a></li>
+                                        <li><a href="/Identity/Account/Manage/ChangePassword"><small class="text-black">&nbsp;&nbsp;Change Password</small></a></li>
+                                    </ul>
+                                </div>
+                                @*  <div class="form-control"><a href="/Identity/Account/Logout"><i class="fa fa-power-off"></i></a> </div>
+                                    <div class="form-control"><a href="/Identity/Account/Manage/ChangePassword"><i class="fa fa-power-off"></i></a> </div>*@
+
+                            </li>
+                        </ul>
+
+
+
+                    </div>
+                    <script class="result-template" type="text/x-handlebars-template">
+                        <div class="ProfileCard u-cf">
+                            <div class="ProfileCard-avatar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-airplay m-0"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"></path><polygon points="12 15 17 21 7 21 12 15"></polygon></svg></div>
+                            <div class="ProfileCard-details">
+                                <div class="ProfileCard-realName">{{name}}</div>
+                            </div>
+                        </div>
+                    </script>
+                    <script class="empty-template" type="text/x-handlebars-template">
+                        <div class="EmptyMessage">Your search turned up 0 results. This most likely means the backend is down, yikes!</div>
+                    </script>
+                </div>
+            </div>
+        }
+        <!-- Page Header Ends  -->
+        <!-- Page Header Ends  -->
+        <!-- Page Body Start-->
+        <div class="page-body-wrapper sidebar-icon">
+            <!-- Page Sidebar Start-->
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="sidebar-wrapper">
+                    <div class="logo-wrapper" style="        padding-bottom: 0px;
+        padding-top: 0px;
+        padding-left: 70px;">
+                        <a href="~/" style="width: 110px; height: 79px;"><img style="width: 110px; height: 79px;" class="img-fluid for-light" src="~/assets/images/logo/29d9f0bdb93e26caf6153e49db944318ed5d8739e6e9b31b6b5324c0a303e883.png" alt=""><img style="width: 110px; height: 79px;" class="img-fluid for-dark" src="~/assets/images/logo/29d9f0bdb93e26caf6153e49db944318ed5d8739e6e9b31b6b5324c0a303e883.png" alt=""></a>
+                        <div class="back-btn"><i class="fa fa-angle-left"></i></div>
+                    </div>
+                    <div class="logo-icon-wrapper"><a href="index.html"><img class="img-fluid" src="~/assets/images/logo/logo-icon.png" alt=""></a></div>
+                    <nav class="sidebar-main">
+                        <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+                        <div id="sidebar-menu">
+                            <ul class="sidebar-links custom-scrollbar">
+                                <li class="back-btn">
+                                    <a href="index.html"><img class="img-fluid" src="~/assets/images/logo/logo-icon.png" alt=""></a>
+                                    <div class="mobile-back text-right"><span>Back</span><i class="fa fa-angle-right pl-2" aria-hidden="true"></i></div>
+                                </li>
+                                @if (User.IsInRole("Admin") || User.IsInRole("ManagingDirector"))
+                                {
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="activity"></i><span>HRM</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li>
+                                                <a class="submenu-title" href="#">Departments<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                                <ul class="nav-sub-childmenu submenu-content">
+                                                    <li><a asp-action="Index" asp-controller="Department">View</a></li>
+                                                    <li><a asp-action="Create" asp-controller="Department">Create</a></li>
+                                                </ul>
+                                            </li>
+
+                                            <li>
+                                                <a class="submenu-title" href="#">Designations<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                                <ul class="nav-sub-childmenu submenu-content">
+                                                    <li><a asp-action="Index" asp-controller="Designation">View</a></li>
+                                                    <li><a asp-action="Create" asp-controller="Designation">Create</a></li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <a class="submenu-title" href="#">Department Teams<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                                <ul class="nav-sub-childmenu submenu-content">
+                                                    <li><a asp-action="Index" asp-controller="Teams">View</a></li>
+                                                    <li><a asp-action="Create" asp-controller="Teams">Create</a></li>
+                                                </ul>
+                                            </li>
+                                            @*     <li>
+                        <a class="submenu-title" href="#">Employees<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                        <ul class="nav-sub-childmenu submenu-content">
+                            <li><a asp-action="Index" asp-controller="Employees">View</a></li>
+                            <li><a asp-action="Create" asp-controller="Employees">Create</a></li>
+                        </ul>
+                    </li>*@
+
+
+                                            @* <li><a href="~/Department/Index">Departments</a></li>
+                    <li><a href="~/Designation/Index">Designations</a></li>
+                    <li><a href="~/Teams/Index">Department Teams</a></li>
+                    <li><a href="~/Employees/Index">Employees</a></li>*@
+                                        </ul>
+                                    </li>
+                                }
+                                @if (User.IsInRole("Admin") || User.IsInRole("ManagingDirector") || (User.IsInRole("HRManager")) || User.IsInRole("DepartmentHead") || (User.IsInRole("TeamHead")))
+                                {
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="user"></i><span>Employees</span></a>
+                                        <ul class="sidebar-submenu">
+
+
+                                            <li><a asp-action="Index" asp-controller="Employees">View</a></li>
+                                            @if (!User.IsInRole("TeamHead"))
+                                            {
+                                                <li><a asp-action="Create" asp-controller="Employees">Create</a></li>
+                                            }
+
+                                        </ul>
+                                    </li>
+                                }
+                                @if (User.IsInRole("Admin") || User.IsInRole("ManagingDirector") || User.IsInRole("ProjectManager"))
+                                {
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="clock"></i><span>Shifts</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li><a asp-action="Index" asp-controller="Shifts">Shifts</a></li>
+                                            <li><a asp-action="Index" asp-controller="OfficialShifts">Shift Timmings</a></li>
+                                        </ul>
+                                    </li>
+                                }
+
+                                @if (!User.IsInRole("Employee"))
+                                {
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="check-circle"></i><span>Attendance</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li><a asp-action="Index" asp-controller="Attendance">Attendance Record</a></li>
+                                            @if (!User.IsInRole("TeamHead"))
+                                            {
+
+                                                <li><a asp-action="ApprovalCheckoutRequest" asp-controller="Attendance">Approval Requests</a></li>
+                                            }
+                                            </ul>
+                                    </li>
+                                }
+
+                                @if (User.IsInRole("DepartmentHead"))
+                                {
+                                    @inject ERP_Project.Services.IdentifyAccessService identifyAccessService
+                                    @if (await identifyAccessService.IsAManagementHead(User))
+                                    {
+                                        <li class="sidebar-list">
+                                            <a class="sidebar-link sidebar-title" href="#"><i data-feather="file-text"></i><span>Hiring</span></a>
+                                            <ul class="sidebar-submenu">
+                                                <li>
+                                                    <a class="submenu-title" href="#">Applications<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                                    <ul class="nav-sub-childmenu submenu-content">
+                                                        <li><a asp-action="Index" asp-controller="Applications">View</a></li>
+                                                        <li><a asp-action="Create" asp-controller="Applications">Create</a></li>
+                                                    </ul>
+                                                </li>
+
+                                            </ul>
+                                        </li>
+                                    }
+                                }
+                                @if ((User.IsInRole("HRManager")) || (User.IsInRole("Admin")))
+                                {
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="file-text"></i><span>Hiring</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li>
+                                                <a class="submenu-title" href="#">Applications<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                                <ul class="nav-sub-childmenu submenu-content">
+                                                    <li><a asp-action="Index" asp-controller="Applications">View</a></li>
+                                                    <li><a asp-action="Create" asp-controller="Applications">Create</a></li>
+                                                </ul>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                }
+
+                                @* @if ((!User.IsInRole("DepartmentHead")) && (!User.IsInRole("Employee")))*@
+                                @if ((!User.IsInRole("Employee")) && (!User.IsInRole("TeamHead")))
+                                {
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="file-text"></i><span>Leaves</span></a>
+                                        <ul class="sidebar-submenu">
+                                          
+                                                <li>
+                                                    <a class="submenu-title" href="#">Leaves Category<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                                    <ul class="nav-sub-childmenu submenu-content">
+                                                        <li><a asp-action="Index" asp-controller="LeavesCategories">View</a></li>
+                                                        <li><a asp-action="Create" asp-controller="LeavesCategories">Create</a></li>
+                                                    </ul>
+                                                </li>
+                                            
+                                            <li>
+                                                <a class="submenu-title" href="#">Leaves<span class="sub-arrow"><i class="fa fa-angle-right"></i></span></a>
+                                                <ul class="nav-sub-childmenu submenu-content">
+
+                                                    <li><a asp-action="Index" asp-controller="Leaves">All Leaves</a></li>
+                                                  
+                                                        <li><a asp-action="Create" asp-controller="Leaves">Add Leaves</a></li>
+                                                    
+                                                </ul>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                }
+                                @if (User.IsInRole("Employee"))
+                                {
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="clock"></i><span>Leaves</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li><a asp-action="EmployeeIndex" asp-controller="Leaves">All Leaves</a></li>
+                                            <li><a asp-action="Create" asp-controller="Leaves">Add Leaves</a></li>
+
+                                        </ul>
+                                    </li>
+                                }
+
+                                <li class="sidebar-list">
+                                    <a class="sidebar-link sidebar-title" href="#"><i data-feather="check-circle"></i><span>Time Sheet</span></a>
+                                    <ul class="sidebar-submenu">
+                                        <li><a asp-action="EmployeeAttendance" asp-controller="User">CI/CO sheet</a></li>
+                                        <li><a asp-action="TermsandConditions" asp-controller="User">Terms and Conditions</a></li>
+
+                                    </ul>
+                                </li>
+                                @if ((User.IsInRole("Admin")) || (User.IsInRole("HRManager")) || (User.IsInRole("DepartmentHead")) || User.IsInRole("ManagingDirector"))
+                                {
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="check-circle"></i><span>Employee Reports</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li><a asp-action="Index" asp-controller="AdminReports">Daily Reports</a></li>
+                                            <li><a asp-action="monthlyReports" asp-controller="AdminReports">Monthly Report</a></li>
+                                        </ul>
+                                    </li>
+                                }
+                                    <li class="sidebar-list">
+                                        <a class="sidebar-link sidebar-title" href="#"><i data-feather="check-circle"></i><span>Announcement</span></a>
+                                        <ul class="sidebar-submenu">
+                                            <li><a asp-action="Index" asp-controller="Announcement">Index</a></li>
+                                            @if ((User.IsInRole("HRManager")) || (User.IsInRole("Admin")) && !(User.IsInRole("DepartmentHead")))
+                                            {
+                                                <li><a asp-action="Create" asp-controller="Announcement">Make Announcement</a></li>
+                                            }
+                                        </ul>
+                                    </li>
+                               
+                            </ul>
+                        </div>
+                        <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+                    </nav>
+                </div>
+            }
+            <!-- Page Sidebar Ends-->
+            <div class="page-body">
+                <div class="container-fluid">
+                    <main role="main" class="pb-1">
+                        @RenderBody()
+                    </main>
+                </div>
+
+            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <!-- footer start-->
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 footer-copyright text-center">
+                                <p class="mb-0">Copyright 2021 © ERP By Digicon Valley </p>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            }
+        </div>
+    </div>@*
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
+    <!-- latest jquery-->
+    <script src="~/assets/js/jquery-3.5.1.min.js"></script>
+    <!-- Bootstrap js-->
+    <script src="~/assets/js/bootstrap/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap/bootstrap.js"></script>
+    <!-- feather icon js-->
+    <script src="~/assets/js/icons/feather-icon/feather.min.js"></script>
+    <script src="~/assets/js/icons/feather-icon/feather-icon.js"></script>
+    <!-- Sidebar jquery-->
+    <script src="~/assets/js/config.js"></script>
+    <!-- Plugins JS start-->
+    <script src="~/assets/js/sidebar-menu.js"></script>
+    @RenderSection("Scripts", required: false)
+    @RenderSection("DeptTeamsjs", required: false)
+
+
+    <script src="~/assets/js/datatable/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/datatables/datatable.custom.js"></script>
+
+    <script src="~/assets/js/icons/icons-notify.js"></script>
+    <script src="~/assets/js/icons/icon-clipart.js"></script>
+
+    <script src="~/assets/js/select2/select2.full.min.js"></script>
+    <script src="~/assets/js/select2/select2-custom.js"></script>
+
+    @*<script src="~/assets/js/chart/chartist/chartist.js"></script>
+        <script src="~/assets/js/chart/chartist/chartist-plugin-tooltip.js"></script>
+        <script src="~/assets/js/chart/knob/knob.min.js"></script>
+        <script src="~/assets/js/chart/knob/knob-chart.js"></script>
+        <script src="~/assets/js/chart/apex-chart/apex-chart.js"></script>
+        <script src="~/assets/js/chart/apex-chart/stock-prices.js"></script>
+        <script src="~/assets/js/notify/bootstrap-notify.min.js"></script>
+
+        <script src="~/assets/js/dashboard/default.js"></script>
+        <script src="~/assets/js/notify/index.js"></script>
+        <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
+        <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
+        <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+        <script src="~/assets/js/typeahead/handlebars.js"></script>
+        <script src="~/assets/js/typeahead/typeahead.bundle.js"></script>
+        <script src="~/assets/js/typeahead/typeahead.custom.js"></script>
+        <script src="~/assets/js/typeahead-search/handlebars.js"></script>
+        <script src="~/assets/js/typeahead-search/typeahead-custom.js"></script>
+        <script src="~/assets/js/tooltip-init.js"></script>*@
+
+    <!-- Plugins JS Ends-->
+    <!-- Theme js-->
+    <script src="~/assets/js/script.js"></script>
+    @*  <script src="~/assets/js/theme-customizer/customizer.js"></script>*@
+    <!-- login js-->
+    <!-- Plugin used-->
+    @RenderSection("myjs", required: false)
+
+</body>
+</html>

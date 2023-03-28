@@ -1,0 +1,1232 @@
+﻿@model ERP_Project.Models.ViewModel.AttendanceVM
+@{
+    ViewData["Title"] = "EmployeeAttendance";
+    bool b = false;
+    bool requestDeclinedModal = true;
+    var empId = Model.empId;
+    var t = 1;
+    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time");
+    var dateTimeConverter = TimeZoneInfo.ConvertTime(DateTime.Now, tz);
+
+    var DaysInmonth = 0;
+    int range = 0;
+    if (Model.monthBit == 0)
+    {
+        DaysInmonth = DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month);
+        range = dateTimeConverter.Date.Day;
+    }
+    else
+    {
+        DaysInmonth = DateTime.DaysInMonth(Model.getYear, Model.selectedMonth);
+        range = DaysInmonth;
+    }
+
+}
+
+@section DeptTeamsjscss{
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/scrollable.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/prism.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/simple-line-icon.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
+
+}
+<br />
+
+<div class="row">
+    <div class="col-6">
+        <h5>Attendance Record</h5>
+
+    </div>
+    <div class="col-3">
+    </div>
+    @if (ViewBag.isReportSubmitted == false)
+    {
+        <div class="col-3">
+            <button class="btn btn-info btn-lg text-center" data-toggle="modal" data-target="#reportmodal" style="width:250px; height:50px; color:white">Submit Today's Report</button>
+
+        </div>
+    }
+    else
+    {
+        <div class="col-3">
+            <button class="btn btn-info btn-lg text-center" data-toggle="modal" data-target="#reportmodal" disabled style="width:250px; height:50px; color:white">Submit Today's Report</button>
+
+        </div>
+    }
+</div>
+
+@{
+   
+
+}
+<br />
+<div id="getempid" hidden>@empId</div>
+@*<div id="getRDM" hidden>@requestDeclinedModal</div>*@
+<div id="gettimespancomp" hidden>
+    @{
+        var datetm = Convert.ToDateTime(Model.emporgEndTime);
+        var testtime = TimeSpan.Compare(datetm.TimeOfDay, dateTimeConverter.TimeOfDay);
+    }
+    @testtime
+</div>
+<div id="getendtym" hidden>
+
+    @Convert.ToString(string.Format("{0:hh:mm tt}", Model.emporgEndTime))
+
+</div>
+<div id="getcurrtym" hidden>
+    @Convert.ToString(string.Format("{0:hh:mm tt}", TimeZoneInfo.ConvertTime(DateTime.Now, tz)))
+
+</div>
+
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card fixed">
+            <div>
+                <br />
+
+                <h6>&nbsp;&nbsp; CI/CO Sheet @String.Format("{0:d/M/yyyy}", dateTimeConverter)</h6>
+                <br />
+            </div>
+            <div class="card-body new-update pt-sm-0">
+                @if (Model.AllemployeeTimeRecords.Any(a => a.RecordTypeName == "checkin" && a.Status == false && a.Date.Date == dateTimeConverter.Date && a.EmployeeId == empId))
+                {
+
+                    if (ViewBag.timeTyp == "timeout")
+                    {
+                        <div class="text-center">
+                            @{
+                                t = 2;
+                                <div id="getb" hidden>@t</div>
+                            }
+                            <button class="btn btn-pill btn-warning btn-lg text-center test" disabled id="hidechkinddl" style="width:250px; height:50px; color:black;" title="Click for check in">Check In</button>
+
+
+                        </div>
+
+                    }
+                    else if (ViewBag.timeTyp == "timein")
+                    {
+                        <div class="text-center">
+                            @{
+                                t = 3;
+                                <div id="getb" hidden>@t</div>
+                            }
+                            <button class="btn btn-pill btn-warning btn-lg text-center test" disabled id="hidechkinddl" style="width:250px; height:50px; color:black;" title="Click for check in">Check In</button>
+
+
+                        </div>
+                    }
+                    else if (Model.empTimeRecordToday.LastOrDefault().Key == "timeout")
+                    {
+                        <div class="text-center">
+                            @{
+                                t = 2;
+                                <div id="getb" hidden>@t</div>
+                            }
+                            <button class="btn btn-pill btn-warning btn-lg text-center test" disabled id="hidechkinddl" style="width:250px; height:50px; color:black;" title="Click for check in">Check In</button>
+
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center">
+                            @{
+                                t = 0;
+                                <div id="getb" hidden>@t</div>
+                            }
+                            <button class="btn btn-pill btn-warning btn-lg text-center test" disabled id="hidechkinddl" style="width:250px; height:50px; color:black;" title="Click for check in">Check In</button>
+
+
+                        </div>
+
+                    }
+
+                }
+                else
+                {
+                    if (ViewBag.officeBased == true)
+                    {
+                        if (ViewBag.isIPtrue == true)
+                        {
+                            <div class="text-center">
+                                @{
+                                    t = 1;
+                                    <div id="getb" hidden>@t</div>
+                                }
+                                <button class="btn btn-pill btn-warning btn-lg text-center" id="hidechkinddl" data-toggle="modal" data-target="#checkinmodal" style="width:250px; height:50px; color:black" title="Click for check in">Check In</button>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center">
+
+                                <button class="btn btn-pill btn-warning btn-lg text-center" id="hidechkinddl" data-toggle="modal" data-target="#ipModal" style="width:250px; height:50px; color:black" title="Click for check in">Check In</button>
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center">
+                            @{
+                                t = 1;
+                                <div id="getb" hidden>@t</div>
+                            }
+                            <button class="btn btn-pill btn-warning btn-lg text-center" id="hidechkinddl" data-toggle="modal" data-target="#checkinmodal" style="width:250px; height:50px; color:black" title="Click for check in">Check In</button>
+
+                        </div>
+                    }
+                }
+                <br />
+                <div class="text-center">
+                    <button class="btn btn-pill btn-warning btn-lg text-center storeCurrTym " id="hidetimeout" onclick="OnTimeOut();" disabled style="width:250px; height:50px; color:black;" title="Click for time out">Time out</button>
+                </div>
+                <br />
+                <div class="text-center">
+                    <button class="btn btn-pill btn-warning btn-lg text-center storeCurrTym" id="hidetimein" onclick="OnTimeIn();" disabled style="width:250px; height:50px; color:black" title="Click for time in">Time In</button>
+                </div>
+
+                <br />
+                <div class="text-center">
+
+
+
+                    @if (Model.AllemployeeTimeRecords.Any(a => a.RecordTypeName == "checkout" && a.Status == false && a.Date.Date == dateTimeConverter.Date && a.EmployeeId == empId))
+                    {
+                        <div class="text-center">
+                            @{
+                                t = 0;
+                                <div id="getc" hidden>@t</div>
+                            }
+                        </div>
+                        <button class="btn btn-pill btn-warning btn-lg text-center" id="hidechkoutddl" disabled style="width:250px; height:50px; color:black" title="Click for check out">Check out</button>
+                    }
+                    else
+                    {
+                        if (ViewBag.officeBased == true)
+                        {
+                            if (ViewBag.isIPtrue == true)
+                            {
+
+                                if (ViewBag.isReportSubmitted == false)
+                                {
+                                    <div class="text-center">
+                                        @{
+                                            t = 1;
+                                            <div id="getc" hidden>@t</div>
+
+                                            requestDeclinedModal = false;
+
+                                        }
+                                    </div>
+                                    <button class="btn btn-pill btn-warning btn-lg text-center" id="hidechkoutddl" data-toggle="modal" disabled data-target="#submitReportFirst" style="width:250px; height:50px; color:black" title="Click for check out">Check out</button>
+
+                                }
+                                else
+                                {
+                                    <div class="text-center">
+                                        @{
+                                            t = 1;
+                                            <div id="getc" hidden>@t</div>
+
+                                            requestDeclinedModal = false;
+
+                                        }
+                                    </div>
+                                    <button class="btn btn-pill btn-warning btn-lg text-center" id="hidechkoutddl" disabled data-toggle="modal" onclick="chktym()" data-target="#approvedChkoutModal" style="width:250px; height:50px; color:black" title="Click for check out">Check out</button>
+
+                                }
+                            }
+                            else
+                            {
+                                {
+                                    <div class="text-center">
+                                        @{
+                                            t = 1;
+                                            <div id="getc" hidden>@t</div>
+
+                                            requestDeclinedModal = false;
+
+                                        }
+                                    </div>
+                                    <button class="btn btn-pill btn-warning btn-lg text-center" id="hidechkoutddl" data-toggle="modal" disabled data-target="#ipModal" style="width:250px; height:50px; color:black" title="Click for check out">Check out</button>
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center">
+                                @{
+                                    t = 1;
+                                    <div id="getc" hidden>@t</div>
+
+                                    requestDeclinedModal = false;
+
+                                }
+                            </div>
+                            <button class="btn btn-pill btn-warning btn-lg text-center" id="hidechkoutddl" disabled data-toggle="modal" onclick="chktym()" data-target="#approvedChkoutModal" style="width:250px; height:50px; color:black" title="Click for check out">Check out</button>
+
+                        }
+
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card fixed">
+            <div>
+                <br />
+                <h6>&nbsp;&nbsp; Timesheet @String.Format("{0:d/M/yyyy}", dateTimeConverter)</h6>
+                <br />
+            </div>
+            <div class="card-body new-update pt-sm-0">
+
+                <div class="alert alert-primary inverse alert-dismissible fade show" role="alert">
+                    @{
+                        if (@Model.empTimeRecordToday.Where(a => a.Key == "checkin").FirstOrDefault().Value == null)
+                        {
+                            <h6> <i class="icon-timer"></i><p style="color:grey">Checkin at : 00:00</p> </h6>
+                        }
+                        else
+                        {
+                            <h6> <i class="icon-timer"></i><p>Checkin at : @Model.empTimeRecordToday.Where(a => a.Key == "checkin").FirstOrDefault().Value</p> </h6>
+                        }
+                    }
+
+
+
+                </div>
+
+                <div class="alert alert-danger outline alert-dismissible fade show" role="alert">
+                    <i data-feather="bell"></i>
+                    <p><b> Reporting time: </b>@Model.emporgReportTime</p>
+                    <button class="close" type="button" data-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div class="alert alert-success outline alert-dismissible fade show" role="alert">
+                    <i data-feather="bell"></i>
+                    <p><b> Break time: </b>@Model.emporgBreakTime mints</p>
+                    <button class="close" type="button" data-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+
+
+                <div class="alert alert-primary inverse alert-dismissible fade show" role="alert">
+                    @{
+
+                        // var dateTimeConverter = DateTime.Now;
+
+                        var atrg = Model.AllemployeeTimeRecords.Where(a => a.RecordTypeName == "checkout").Select(a => new
+                        {
+                            a.EmployeeTimeRecordId,
+                            a.IsApproved
+                        }).FirstOrDefault();
+                        dynamic atr = null;
+                        if (atrg != null)
+                        {
+                            atr = Model.unapprovedcheckouts.Where(a => a.EmployeeTimeRecordId == atrg.EmployeeTimeRecordId && a.Date.Date == dateTimeConverter.Date).Select(a => new
+                            {
+                                a.Date,
+                                a.ApprovalStatus,
+                                a.EmployeeTimeRecordId
+                            }).FirstOrDefault();
+                        }
+                        if (Model.empTimeRecordToday.Where(a => a.Key == "checkout").FirstOrDefault().Value == null)
+                        {
+
+                            requestDeclinedModal = false;
+
+                            @*  <div id="getRDM" hidden>@requestDeclinedModal</div>*@
+                            <h6> <i class="icon-timer"></i><p style="color:grey">Checkout at : 00:00 </p> </h6>
+                        }
+
+
+                        else if (atr != null && atr.ApprovalStatus == "pending")
+                        {
+
+                            <h6> <i class="icon-timer"></i><p style="color:red;font-style:italic">Pending checkout request</p> </h6>
+                        }
+
+                        else if (atr != null && atr.ApprovalStatus == "declined" && atrg.IsApproved == false && Model.emporgEndTime > dateTimeConverter)
+                        {
+
+                            requestDeclinedModal = true;
+                            @*  <div id="getRDM" hidden>@requestDeclinedModal</div>*@
+
+                            <p style="color:red;font-style:italic">Request declined</p>
+                            <h6> <i class="icon-timer"></i><p style="color:grey">Checkout at : 00:00</p> </h6>
+                        }
+                        else if (atrg.IsApproved == false)
+                        {
+
+                            <h6> <i class="icon-timer"></i><p style="color:grey">Checkout at : 00:00</p> </h6>
+                        }
+                        else
+                        {
+                            <h6> <i class="icon-timer"></i><p>Checkout at : @Model.empTimeRecordToday.Where(a => a.Key == "checkout").FirstOrDefault().Value</p> </h6>
+                        }
+
+
+
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card fixed">
+            <div>
+                <br />
+                <h5>&nbsp;&nbsp; Today Activities</h5>
+                <br />
+            </div>
+            @{}
+            <div class="card-body new-update pt-sm-0 vertical-scroll scroll-demo">
+
+                <div class="activity-timeline">
+                    <div class="container">
+                        <br />
+                        @{
+                            if (Model.empTimeRecordToday.Count() <= 0)
+                            {
+                                <div class="row">
+
+                                    <div class="activity-line"></div>
+                                    <div class="activity-dot-secondary"></div>
+                                    <div class="media-body">
+
+                                        <h6><em style="color:gray">&nbsp;&nbsp;&nbsp;&nbsp; Start your today activity by check in!</em></h6>
+                                    </div>
+                                </div>
+                            }
+
+                            else
+                            {
+                                foreach (var item in Model.empTimeRecordToday)
+                                {
+                                    <div class="row">
+                                        <div class="activity-line"></div>
+                                        @*   <div class="activity-dot-secondary"></div>
+                                            <div class="media-body">*@
+                                        @{
+                                            var emptrId = Model.AllemployeeTimeRecords.Where(a => a.RecordTypeName == "checkout" && a.EmployeeId == empId && a.Date.Date == dateTimeConverter.Date).Select(a => new
+                                            {
+                                                a.EmployeeTimeRecordId,
+                                                a.IsApproved
+                                            }).FirstOrDefault();
+
+                                            if (atr != null && atr.ApprovalStatus == "pending" && atr.EmployeeTimeRecordId == emptrId.EmployeeTimeRecordId && item.Key == "checkout")
+                                            {
+                                                <div class="activity-dot-secondary"></div>
+                                                <div class="media-body">
+                                                    <p style="color:red;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Request pending</p>
+                                                </div>
+
+
+                                            }
+                                            else if (atr != null && atr.ApprovalStatus == "declined" && item.Key == "checkout" && atr.EmployeeTimeRecordId == emptrId.EmployeeTimeRecordId && item.Key == "checkout" && emptrId.IsApproved == false)
+                                            {
+
+
+
+                                            }
+                                            else
+                                            {
+
+
+                                                <div class="activity-dot-secondary"></div>
+                                                <div class="media-body">
+                                                    @* <span id="setTime1">&nbsp;&nbsp;&nbsp;&nbsp; @item.Key</span>
+
+                                                        <p>&nbsp;&nbsp;&nbsp;&nbsp;<i class="icon-timer"></i><span id="setTime2">&nbsp;&nbsp;@item.Value</span></p>*@
+                                                    <span>&nbsp;&nbsp;&nbsp;&nbsp; @item.Key</span>
+
+                                                    <p>&nbsp;&nbsp;&nbsp;&nbsp;<i class="icon-timer"></i><span>&nbsp;&nbsp;@item.Value</span></p>
+                                                </div>
+
+
+                                            }
+                                        }
+                                    </div>
+                                    @*    </div>*@
+                                    <br />
+                                }
+                            }
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+@{
+    if (Model.announcement.Count() != 0)
+    {
+        var count3 = 0;
+        <h5>Announcement :-</h5>
+        <div class="card">
+            <div class="card-body">
+                @foreach (var item in Model.announcement)
+                {
+                    count3 = count3 + 1;
+                    <h5 style="color:green;">  <b style="color:black">@count3 - </b>  @item.Title : &nbsp; @item.Description </h5>
+
+                }
+            </div>
+        </div>
+    }
+}
+<form asp-action="showPrevAttendance">
+    <input asp-for="empId" hidden />
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label>Select Month</label>
+                <input class="datepicker-here form-control" type="text" data-language="en" data-min-view="months" data-view="months" data-date-format="MM" asp-for="getMonth">
+
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label>Enter Year</label>
+                <input class="form-control btn-square" asp-for="getYear" required>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+
+            <button type="submit" class="btn btn-primary form-control" style="margin-top:30px">
+                <i class="fa fa-search-plus">&nbsp;&nbsp;Search</i>
+            </button>
+        </div>
+        <div class="col-sm-4">
+            <h5>@Model.getMonthName Attendance Record</h5>
+
+        </div>
+    </div>
+    <br />
+
+</form>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="display" id="basic-1">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Checkin</th>
+                                <th scope="col">Checkout</th>
+                                <th scope="col" class="text-center">Production Hours</th>
+                                <th scope="col" class="text-center">Working Hours</th>
+                                <th scope="col" class="text-center">Over Time</th>
+                                <th scope="col" style="text-align:center">Status</th>
+                                @*     <th scope="col">Status</th>*@
+                            </tr>
+                        </thead>
+                        @{var count = 0;
+                            var status = "";
+                            var remarks = "";
+                        }
+                        <tbody>
+                            @for (var numb = 1; numb <= DaysInmonth; numb++)
+                            {
+                                if (numb <= range)// dateTimeConverter.Date.Day)
+                                {
+                                    var oDate = new DateTime(Model.getYear, Model.selectedMonth, numb);
+                                    //getting missing dates from sorted date
+                                    if (Model.empTimeRecordCred.Any(x => x.Key.Date.Day == numb))
+                                    {
+                                        var item = Model.empTimeRecordCred.Where(x => x.Key.Date.Day == numb).FirstOrDefault();
+                                        @*  @foreach (var item in Model.empTimeRecordCred)
+                                            {*@
+                                        <tr>
+                                            <th scope="row">@{ count = count + 1; } @count</th>
+
+                                            <td>
+                                                @String.Format("{0:d/M/yyyy}", item.Key)
+                                            </td>
+                                            <td>
+
+                                                @{
+                                                    var checkinTime = "";
+                                                    var obj1 = item.FirstOrDefault(a => a.RecordTypeName == "checkin") == null ? null : item.FirstOrDefault(a => a.RecordTypeName == "checkin");
+                                                    if (obj1 == null)
+                                                    {
+                                                        checkinTime = null;
+                                                    }
+
+                                                    else
+                                                    {
+                                                        checkinTime = Convert.ToString(string.Format("{0:hh:mm tt}", obj1.RecordTime));
+                                                    }
+
+                                                }
+                                                @checkinTime
+
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var checkoutTime = "";
+                                                    var checkin = item.FirstOrDefault(a => a.RecordTypeName == "checkin") == null ? null : item.FirstOrDefault(a => a.RecordTypeName == "checkin");
+                                                    @*  if (atr != null && atr.ApprovalStatus == "pending" && atr.Date.Date==dateTimeConverter.Date)
+                                                        {
+
+                                                            checkoutTime = null;
+                                                            remarks = "Checkout request pending";
+                                                            status = "A";
+                                                        }
+                                                        else
+                                                        {*@
+
+                                                    var obj = item.FirstOrDefault(a => a.RecordTypeName == "checkout") == null ? null : item.FirstOrDefault(a => a.RecordTypeName == "checkout");
+                                                    if (obj == null && checkin != null && checkin.Date.Date == dateTimeConverter.Date)
+                                                    {
+                                                        checkoutTime = null;
+                                                        remarks = "Must checkout before leaving";
+                                                        status = "A";
+                                                    }
+                                                    else if (obj == null)
+                                                    {
+                                                        checkoutTime = null;
+                                                        remarks = "Checkout Missed!";
+                                                        status = "A";
+                                                    }
+                                                    else if (obj.IsApproved == false && obj.AdminRemarks != null)
+                                                    {
+                                                        remarks = obj.AdminRemarks;
+                                                        checkoutTime = null;
+                                                        status = "A";
+                                                    }
+                                                    else if (obj.IsApproved == false && atr != null && atr.ApprovalStatus == "pending")
+                                                    {
+                                                        remarks = "Checkout request pending";
+                                                        checkoutTime = null;
+                                                        status = "A";
+                                                    }
+                                                    else if (obj.IsApproved == false)
+                                                    {
+                                                        remarks = "Checkout request pending";
+                                                        checkoutTime = null;
+                                                        status = "A";
+                                                    }
+                                                    else
+                                                    {
+                                                        checkoutTime = Convert.ToString(string.Format("{0:hh:mm tt}", obj.RecordTime));
+                                                        status = "P";
+                                                    }
+                                                    // }
+
+                                                }
+                                                @checkoutTime
+
+
+                                            </td>
+                                            <td class="text-center">
+                                                @{
+                                                    var rezult = 0.0;
+                                                    var rezultbrk = 0.0;
+                                                    var btd = 0.0;
+                                                    if (checkoutTime != null)
+                                                    {
+                                                        //converting break time minutes to hours
+
+                                                        double brktym = Convert.ToDouble(Model.emporgBreakTime);
+                                                        double ok = brktym / 60.0;
+                                                        rezultbrk = System.Math.Round((ok), 1);
+                                                        var TimeRecord = Model.empTimingsList.Where(a=>a.Day.Contains(Convert.ToString(oDate.DayOfWeek))).FirstOrDefault();
+                                                        var inTime = Convert.ToString(string.Format("{0:hh:mm tt}", TimeRecord.StartTime));
+                                                        var outTime = Convert.ToString(string.Format("{0:hh:mm tt}", TimeRecord.EndTime));
+
+                                                        double difference = Convert.ToDateTime(outTime).Subtract(Convert.ToDateTime(inTime)).TotalHours;
+                                                        // float rezult = Convert.ToInt64(difference);
+                                                        rezult = System.Math.Round((difference), 1);
+                                                        rezult = rezult - rezultbrk;
+                                                        rezult = System.Math.Round((rezult), 1);
+                                                        if (rezult < 0)
+                                                        {
+                                                            rezult = 0;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        rezult = 0;
+                                                    }
+                                                }
+
+                                                @rezult hrs
+                                            </td>
+
+                                            <td class="text-center">
+                                                @{
+                                                    var TotalTym = 0.0;
+                                                    int i = 0;
+                                                    var timein = "";
+                                                    // DateTime? temp=null;
+                                                    int countItm = item.Count();
+                                                    foreach (var calTym in item)
+                                                    {
+                                                        i++;
+                                                        if (i == 2 && calTym.RecordTypeName == "timeout" && checkoutTime != null)
+                                                        {
+                                                            var timeout = Convert.ToString(string.Format("{0:hh:mm tt}", calTym.RecordTime));
+                                                            TotalTym = Convert.ToDateTime(timeout).Subtract(Convert.ToDateTime(checkinTime)).TotalHours;
+
+                                                        }
+                                                        else if (calTym.RecordTypeName == "timein")
+                                                        {
+
+                                                            timein = Convert.ToString(string.Format("{0:hh:mm tt}", calTym.RecordTime));
+                                                        }
+                                                        else if (calTym.RecordTypeName == "timeout" && checkoutTime != null)
+                                                        {
+                                                            var timeout = Convert.ToString(string.Format("{0:hh:mm tt}", calTym.RecordTime));
+                                                            if (timein != "")
+                                                            {
+                                                                TotalTym = TotalTym + Convert.ToDateTime(timeout).Subtract(Convert.ToDateTime(timein)).TotalHours;
+                                                            }
+                                                        }
+                                                        else if ((i == countItm) && (calTym.RecordTypeName == "checkout"))
+                                                        {
+                                                            if (checkoutTime != null)
+                                                            {
+                                                                if (timein == "")
+                                                                {
+                                                                    TotalTym = TotalTym + (Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(checkinTime)).TotalHours);
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    TotalTym = TotalTym + (Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(timein)).TotalHours);
+                                                                }
+                                                            }
+                                                        }
+
+                                                    }
+                                                    var TotalTymF = System.Math.Round((TotalTym), 1);
+                                                    if (TotalTymF < 0)
+                                                    {
+                                                        TotalTymF = 0;
+                                                    }
+                                                }
+
+                                                @TotalTymF hrs
+                                            </td>
+
+
+                                            <td class="text-center">
+
+                                                @{
+                                                    DateTime? modelempExactEndTime = null;
+                                                    string modelempExactStartTime = null;
+                                                    if (Model.shiftType == "official")
+                                                    {
+                                                        modelempExactEndTime = Model.empExactEndTime;
+                                                        modelempExactStartTime = Model.emporgReportTime;
+                                                    }
+                                                    else if (Model.shiftType == "custom")
+                                                    {
+                                                        string x1 = item.FirstOrDefault(f => f.Date.ToString("dddd") != null).Date.ToString("dddd"); //getting day
+                                                        modelempExactEndTime = Model.empExactEndTime2.Where(a => a.Key.Contains(x1)).FirstOrDefault().Value;
+                                                        modelempExactStartTime = Model.emporgReportTime2.Where(a => a.Key.Contains(x1)).FirstOrDefault().Value;
+                                                    }
+
+
+                                                    var rezultOverTime = 0.0;
+                                                    var overtime = "";
+                                                    if (checkoutTime != null)
+                                                    {
+                                                        var endTym = Convert.ToString(string.Format("{0:hh:mm tt}", modelempExactEndTime));
+                                                        var strtTym = modelempExactStartTime;
+                                                        if (endTym != "" && strtTym != null)
+                                                        {
+                                                            double RepTymDiff = Convert.ToDateTime(endTym).Subtract(Convert.ToDateTime(strtTym)).TotalHours;
+                                                            double CIOTymDiff = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(checkinTime)).TotalHours;
+                                                            double diffOverTime = CIOTymDiff - RepTymDiff;
+
+                                                            // double diffOverTime = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(endTym)).TotalHours;
+                                                            rezultOverTime = System.Math.Round((diffOverTime), 1);
+                                                            if (diffOverTime > 0 && diffOverTime < 1)
+                                                            {
+                                                                // diffOverTime = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(endTym)).TotalMinutes;
+                                                                double RepTymDiff2 = Convert.ToDateTime(endTym).Subtract(Convert.ToDateTime(strtTym)).TotalMinutes;
+                                                                double CIOTymDiff2 = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(checkinTime)).TotalMinutes;
+                                                                double diffOverTime2 = CIOTymDiff2 - RepTymDiff2;
+
+                                                                rezultOverTime = System.Math.Round((diffOverTime2), 1);
+                                                                overtime = rezultOverTime + " mins";
+                                                            }
+
+                                                            else if (rezultOverTime <= 0)
+                                                            {
+                                                                overtime = "0";
+                                                            }
+                                                            else
+                                                            {
+                                                                overtime = Math.Abs(rezultOverTime) + " hrs";
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            overtime = "0";
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        overtime = "0";
+                                                    }
+                                                }
+
+                                                @overtime
+                                            </td>
+                                            @{
+                                                if (status.Contains("A"))
+                                                {
+                                                    <td class="example-popover" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="top" data-offset="0px" data-content="@remarks" style="color:red; text-align:center"> @status</td>
+
+                                                    @* <td style="color:red; text-align:center">
+
+                                                        </td>*@
+                                                }
+                                                else if (status.Contains("P"))
+                                                {
+                                                    <td style="color: green; text-align: center">
+                                                        @status
+                                                    </td>
+                                                }
+
+
+
+                                            }
+
+                                        </tr>
+
+
+
+                                        @*   }*@
+                                    }
+                                    else if (Model.sundays.Contains(numb))
+                                    {
+                                        <tr>
+                                            <th scope="row">@{ count = count + 1; } @count</th>
+
+                                            <td>
+                                                @{ var dateofMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, numb);
+                                                }
+                                                @String.Format("{0:d/M/yyyy}", dateofMonth)
+                                            </td>
+                                            <td>-</td>
+                                            <td>- </td>
+                                            <td class="text-center">- </td>
+
+                                            <td class="text-center">- </td>
+
+
+                                            <td class="text-center">- </td>
+                                            <td class="text-center">-</td>
+
+                                        </tr>
+                                    }
+                                    else if (Model.employeeLeaves.Any(a => a.From.Day == numb || a.To.Day == numb || ((numb >= a.From.Day && numb <= a.To.Day))))
+                                    {
+                                        <tr>
+                                            <th scope="row">@{ count = count + 1; } @count</th>
+
+                                            <td>
+                                                @{ var dateofMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, numb);
+                                                }
+                                                @String.Format("{0:d/M/yyyy}", dateofMonth)
+                                            </td>
+                                            <td>-</td>
+                                            <td>- </td>
+                                            <td class="text-center">- </td>
+
+                                            <td class="text-center">- </td>
+
+
+                                            <td class="text-center">- </td>
+                                            <td class="text-center" style="color:darkblue">L</td>
+
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <th scope="row">@{ count = count + 1; } @count</th>
+
+                                            <td>
+                                                @{ var dateofMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, numb);
+                                                }
+                                                @String.Format("{0:d/M/yyyy}", dateofMonth)
+                                            </td>
+                                            <td>-</td>
+                                            <td>- </td>
+                                            <td class="text-center">- </td>
+
+                                            <td class="text-center">- </td>
+
+
+                                            <td class="text-center">- </td>
+                                            <td class="text-center" style="color:red">A</td>
+
+                                        </tr>
+                                    }
+                               }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="getRDM" hidden>@requestDeclinedModal</div>
+
+<!--submitReportFirst-->
+<div class="modal fade" id="submitReportFirst" tabindex="-1" role="dialog" aria-labelledby="submitReportFirst" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <em style="color:red;">Submit your Daily Report before check out!</em>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" type="button" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--reportmodal-->
+<form asp-action="postDailyReport">
+    <input hidden asp-for="@empId" />
+    <div class="modal fade" id="reportmodal" tabindex="-1" role="dialog" aria-labelledby="reportmodal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Today's Report</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Description:</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="7" asp-for="employeeReport"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit" onsubmit="submitted()">Submit</button>
+                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<!--ipModal in modal-->
+<div class="modal fade" id="ipModal" tabindex="-1" role="dialog" aria-labelledby="ipModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Check In</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <em style="color:red;">Please check In/Out with Office Internet Connection!</em>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" type="button" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--check in modal-->
+<div class="modal fade" id="checkinmodal" tabindex="-1" role="dialog" aria-labelledby="checkinmodal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Check In</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to check in?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary storeCurrTym" type="button" data-dismiss="modal" onclick="FillNowIn()">Yes</button>
+                <button class="btn btn-danger" type="button" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--approve chk out modal-->
+
+<form asp-action="EmployeeAttendance">
+    <input hidden asp-for="@empId" />
+    <div class="modal fade" id="approvedChkoutModal" tabindex="-1" role="dialog" aria-labelledby="approvedChkoutModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Check out</h5>
+                    <br />
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+
+                    <em style="color:red">Kindly give the reason for requesting early leave.</em>
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Reason:</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="employeeEarlyLeavingReason"></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="submit" onsubmit="disablebtn()">Submit</button>
+                    <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--approval rejected chk out modal-->
+
+
+<div class="modal fade" id="approvalRejectedModal" tabindex="-1" role="dialog" aria-labelledby="approvalRejectedModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Check out</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <P style="color:red">You already have Declined early request by Admin. Kindly contact admin in case of further issues!</P>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" type="button" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--check out modal-->
+<div class="modal fade" id="checkoutmodal" tabindex="-1" role="dialog" aria-labelledby="checkoutmodal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Check out</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <h5>Are you sure you want to check out?</h5>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary storeCurrTym" type="button" data-dismiss="modal" onclick="FillNowOut()">Yes</button>
+                <button class="btn btn-danger" type="button" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section DeptTeamsjs{
+    <script src="~/assets/js/scrollable/perfect-scrollbar.min.js"></script>
+    <script src="~/assets/js/scrollable/scrollable-custom.js"></script>
+    <script src="~/assets/js/bootstrap/popper.min.js"></script>
+    <script src="~/assets/js/popover-custom.js"></script>
+    <script src="~/assets/js/datatable/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/datatables/datatable.custom.js"></script>
+    <script src="~/assets/js/prism/prism.min.js"></script>
+    <script src="~/assets/js/clipboard/clipboard.min.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+
+    <script type="text/javascript">
+
+        var jsid = document.getElementById("getempid");
+                                                var ID = parseInt(jsid.innerHTML);
+                                                var endtym = document.getElementById("getendtym");
+                                                var currtym = document.getElementById("getcurrtym");
+                                                var tymspan = document.getElementById("gettimespancomp");
+                                                var x = document.getElementById("getb").innerHTML;
+                                                var y = document.getElementById("getc").innerHTML;
+                                                var rdm = document.getElementById("getRDM").innerHTML;
+                                                //  var currtym = new Date().toLocaleTimeString();
+
+
+                                                var timeType = "";
+                                                debugger
+                                                function FillNowIn() {
+                                                    debugger
+
+                document.getElementById("hidechkinddl").disabled = true;
+                                                    document.getElementById("hidechkoutddl").disabled = false;
+                                                    document.getElementById("hidetimein").disabled = true;
+                                                    document.getElementById("hidetimeout").disabled = false;
+                                                    //  document.getElementById("hideReportModal").disabled = false;
+                                                    timeType = "checkin";
+                                                }
+                                                function FillNowIn2() {
+                                                    debugger
+
+            document.getElementById("hidetimein").disabled = false;
+                                                    document.getElementById("hidetimeout").disabled = true;
+                                                    document.getElementById("hidechkoutddl").disabled = true;
+                                                    // document.getElementById("hideReportModal").disabled = true;
+                                                    timeType = "timeout";
+
+
+
+
+                                                }
+        @*   $(".storeoutTym").click(function () {
+            debugger
+            $.ajax({
+                timeType = "timeout";
+                    type: "GET",
+                    url: '@Url.Action("EmployeeAttendance")',
+                data: { timetype: timeType }
+
+                });
+              });
+        debugger*@
+
+        function FillNowIn3() {
+            document.getElementById("hidetimein").disabled = true;
+            document.getElementById("hidetimeout").disabled = false;
+            document.getElementById("hidechkoutddl").disabled = false;
+          //  document.getElementById("hideReportModal").disabled = false;
+            timeType = "timein";
+        }
+
+        debugger
+
+        if (x == 0) {
+            FillNowIn();
+        }
+        if (x == 2) {
+            debugger
+            FillNowIn2();
+        }
+        if (x == 3) {
+            debugger
+            FillNowIn3();
+        }
+    function FillNowOut() {
+
+        var TimeTextout = document.getElementById("TimeShowCheckout");
+        document.getElementById("hidechkoutddl").disabled = true;
+        document.getElementById("hidetimein").disabled = true;
+        document.getElementById("hidetimeout").disabled = true;
+       // document.getElementById("hideReportModal").disabled = true;
+        timeType = "checkout";
+        }
+        function onapprovechkout() {
+
+            document.getElementById("hidechkinddl").disabled = true;
+            document.getElementById("hidechkoutddl").disabled = true;
+            document.getElementById("hidetimein").disabled = true;
+            document.getElementById("hidetimeout").disabled = true;
+           // document.getElementById("hideReportModal").disabled = true;
+        }
+        if (y == 0) {
+            onapprovechkout();
+        }
+            function disablebtn() {
+
+                document.getElementById("hidechkoutddl").disabled = true;
+            }
+        function OnTimeOut() {
+
+            document.getElementById("hidetimein").disabled = false;
+            document.getElementById("hidetimeout").disabled = true;
+            document.getElementById("hidechkoutddl").disabled = true;
+            //document.getElementById("hideReportModal").disabled = true;
+            timeType = "timeout";
+        }
+        function OnTimeIn() {
+
+            document.getElementById("hidetimein").disabled = true;
+            document.getElementById("hidetimeout").disabled = false;
+            document.getElementById("hidechkoutddl").disabled = false;
+           // document.getElementById("hideReportModal").disabled = false;
+            timeType = "timein";
+        }
+        debugger
+        function submitted() {
+            document.getElementById("hideReportModal").disabled = true;
+        }
+        function chktym() {
+            debugger
+            if (tymspan.innerHTML >= 1&&rdm!="True") {
+                return "approvedChkoutModal";
+            }
+            else if (rdm == "True")
+            {
+                var backOfferButton = document.getElementById('hidechkoutddl');
+
+                console.log(backOfferButton.dataset.target);
+
+                backOfferButton.dataset.target = "#approvalRejectedModal";
+
+                console.log(backOfferButton.dataset.target);
+            }
+            else {
+                var backOfferButton = document.getElementById('hidechkoutddl');
+
+                console.log(backOfferButton.dataset.target);
+
+                backOfferButton.dataset.target = "#checkoutmodal";
+
+                console.log(backOfferButton.dataset.target);
+
+            }
+        }
+        debugger
+        $(".storeCurrTym").click(function () {
+            currtym =new Date().toLocaleTimeString();
+            debugger
+            $.ajax({
+
+                    type: "POST",
+                    url: '@Url.Action("PostCurrentTimeToDb")',
+                    data: {type: timeType, id: ID },
+                    success: function () {
+                        window.location = '/User/EmployeeAttendance'  //?timetype=' + timeType;
+                      //  window.location = window.location;
+                    }
+
+                });
+        });
+
+                    $(".test").click(function () {
+
+                document.getElementById("hidechkinddl").disabled = true;
+        document.getElementById("hidechkoutddl").disabled = false;
+        document.getElementById("hidetimein").disabled = true;
+        document.getElementById("hidetimeout").disabled = false;
+        });
+    </script>
+}

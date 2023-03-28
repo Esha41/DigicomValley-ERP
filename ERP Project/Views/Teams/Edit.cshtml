@@ -1,0 +1,146 @@
+﻿@model ERP_Project.Models.ViewModel.DepartmentsVM
+
+@section DeptTeamsjscss{
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/simple-line-icon.css">
+
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/select2.css">
+}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Edit Team
+                </h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">                                       <i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Apps</li>
+
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<form asp-action="Edit" asp-controller="Teams">
+    <input type="hidden" asp-for="teams.DepartmentTeamsId" />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+
+                                        <label asp-for="teams.Department.CompanyId" class="form-label">Company:</label>
+                                        <select class="form-control btn-square" asp-for="teams.Department.CompanyId" asp-items="ViewBag.CompanyId" disabled>
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="teams.DepartmentId" class="form-label">Department:</label>
+                                        <select class="form-control btn-square" asp-for="teams.DepartmentId" asp-items="ViewBag.DepartmentId" disabled>
+                                        </select>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label asp-for="teams.TeamName" class="form-label">Team Name:</label>
+                                        <input asp-for="teams.TeamName" class="form-control" type="text" placeholder="Name must be Unique" required>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="container-fluid">
+                                            <div class="select2-drpdwn">
+                                                <div class="row">
+                                                    <!-- Default Textbox start-->
+                                                    <div class="col-md-12">
+
+                                                        <div class="mb-2">
+                                                            <label asp-for="EmployeesIds" class="form-label">Team Head:</label>
+                                                            <select class="js-example-placeholder-multiple teamHeadPlaceHolder  col-sm-12" asp-for="EmployeesIds" asp-items="ViewBag.EmployeeId" multiple="multiple">
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <div class="container-fluid">
+                                            <div class="select2-drpdwn">
+                                                <div class="row">
+                                                    <!-- Default Textbox start-->
+                                                    <div class="col-md-12">
+
+                                                        <div class="mb-2">
+                                                            <div class="col-form-label"> Team Employees:</div>
+                                                            <select class="js-example-placeholder-multiple teamEmployeesPlaceHolder col-sm-12" asp-for="TeamEmployeesIds" asp-items="ViewBag.TeamsEmployeeId" multiple="multiple">
+                                                            </select>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+
+                            <div class="row">
+                                <div class="col">
+                                    <input type="submit" value="Edit" class="btn btn-success mr-3" />
+                                    <a class="btn btn-danger" href="~/Teams/Index">Back</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@section DeptTeamsjs{
+    <script src="~/assets/js/datatable/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/datatables/datatable.custom.js"></script>
+
+    <script src="~/assets/js/icons/icons-notify.js"></script>
+    <script src="~/assets/js/icons/icon-clipart.js"></script>
+
+    <script src="~/assets/js/select2/select2.full.min.js"></script>
+    <script src="~/assets/js/select2/select2-custom.js"></script>
+    <script type="text/javascript">
+
+
+
+        $(".teamHeadPlaceHolder").select2({
+            placeholder: "Select Team Head "
+        });
+        $(".teamEmployeesPlaceHolder").select2({
+            placeholder: "Select Team Employees "
+        });
+    </script>
+/**/
+}

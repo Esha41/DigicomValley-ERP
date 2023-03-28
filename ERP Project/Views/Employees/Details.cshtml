@@ -1,0 +1,328 @@
+﻿@model ERP_Project.Models.View_Models.EmployeeVM
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>
+                    Employee Details
+                </h3>
+            </div>
+            <div class="col-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">                                       <i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Apps</li>
+                    <li class="breadcrumb-item active"> Employee Create                          </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Personal Information</h3>
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">Employee Name:<b>@Model.employee.FullName</b></div>
+                        <div Class="col-6">Employee Email:<b>@Model.employee.Email</b></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">Employee CNIC:<b>@Model.employee.CNIC</b></div>
+                        <div Class="col-6">Employee Phone No:<b>@Model.employee.MobileContactNo</b></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">Current Address:<b>@Model.employee.CurrentAddress</b></div>
+                        <div Class="col-6">Permanent Address:<b>@Model.employee.PermanentAddress</b></div>
+                    </div>
+                    <br />
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Professional Information</h3>
+
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">Department:<b>@Model.employee.Department.DepartmentName</b></div>
+                        <div Class="col-6">Designation:<b>@Model.employee.Department_Designation.DesignationName</b></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">Start Date:<b>@String.Format("{0:d/M/yyyy}", Model.position.StartDate)</b></div>
+                        <div Class="col-6">End Date:<b>@String.Format("{0:d/M/yyyy}", Model.position.EndDate)</b></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div Class="col-6">Joining Position:<b>@Html.DisplayFor(a => a.position.PositionType)</b></div>
+                        <div Class="col-6">Salary:<b>@Html.DisplayFor(a => a.position.Salary)</b></div>
+                    </div>
+                    <br />
+                    <div class="row">
+
+                        <div Class="col-6">Is Job Paid: <b>@Html.DisplayFor(a => a.position.IsPaid)</b></div>
+                        <div Class="col-6">Is Job Office based: <b>@Html.DisplayFor(a => a.employee.IsAttendanceIPbased)</b></div>
+                    </div>
+                    <br />
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Emergency Contacts</h3>
+
+                    <br />
+                    <h5>Primary Contacts</h5>
+                    <div class="row">
+                        <div Class="col-4">Name:<b>@Html.DisplayFor(a => a.PrimaryRelations.PersonName)</b></div>
+                        <div Class="col-4">Relationship:<b>@Html.DisplayFor(a => a.PrimaryRelations.RelationshipName)</b></div>
+                        <div Class="col-4">Contact:<b>@Html.DisplayFor(a => a.PrimaryRelations.PersonContactNo)</b></div>
+                    </div>
+                    <br />
+                    <br />
+                    <h5>Secondary Contacts</h5>
+                    <div class="row">
+                        <div Class="col-4">Name:<b>@Html.DisplayFor(a => a.SecondaryRelations.PersonName)</b></div>
+                        <div Class="col-4">Relationship:<b>@Html.DisplayFor(a => a.SecondaryRelations.RelationshipName)</b></div>
+                        <div Class="col-4">Contact:<b>@Html.DisplayFor(a => a.SecondaryRelations.PersonContactNo)</b></div>
+                    </div>
+                    <br />
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Education Details</h3>
+
+                    <br />
+                    @foreach (var item in Model.education)
+                    {
+                        <div class="row">
+                            <div Class="col-3">Level:  <b>@item.EducationLevel</b></div>
+                            <div Class="col-3">Institute Name:  <b>@item.InstitutionName</b></div>
+                            <div Class="col-2">Degree:  <b>@item.Degree</b></div>
+                            <div Class="col-4">Period:  <b>@item.DateTo.ToString("dd/MM/yyyy") to @item.DateFrom.ToString("dd/MM/yyyy")</b></div>
+                        </div>
+                        <hr />
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Work Experience</h3>
+
+                    <br />
+                    @foreach (var item in Model.employeeExperienceList)
+                    {
+                        <div class="row">
+                            <div Class="col-6">Company Name:<b>@item.CompanyName</b></div>
+                            <div Class="col-6">Position:<b>@item.Position</b></div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div Class="col-6">Salary:<b>@item.Salary</b></div>
+                            <div Class="col-6">Reason for leaving:<b>@item.ReasonForLeaving</b></div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div Class="col-6">From:<b>@String.Format("{0:d/M/yyyy}", item.DateTo)</b></div>
+                            <div Class="col-6">To:<b>@String.Format("{0:d/M/yyyy}", item.DateFrom)</b></div>
+                        </div>
+                        <hr />
+
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Major skills</h3>
+                    <br />
+                    @foreach (var item in Model.employeeskillsList)
+                    {
+
+                        <div class="row">
+                            <div Class="col-3">- @item.Skill.SkillName</div>
+                        </div>
+                      
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>References</h3>
+                    @foreach (var item in Model.employeesReferencesList)
+                    {
+                        <br />
+                        <div class="row">
+                            <div Class="col-6">Full Name:<b>@item.FullName</b></div>
+                            <div Class="col-6">Relationship:<b>@item.Relationship</b></div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div Class="col-6">Company:<b>@item.CompanyName</b></div>
+                            <div Class="col-6">Phone:<b>@item.ContactNo</b></div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div Class="col-6">Address:<b>@item.Address</b></div>
+                        </div>
+                        <hr />
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.IsCustomShift)
+{
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Assigned Shift</h5>
+
+                <br />
+              
+                    <div Class="col-6">Shift Type  :  <b>@Model.shift shift</b></div>
+          
+                <hr />
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+
+                            <th scope="col">Day</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">Max Start Time</th>
+                            <th scope="col">Break Time</th>
+                            <th scope="col">End Time</th>
+                            <th scope="col">Min End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.PrevTimming)
+                        {
+
+                            <tr>
+                                <th scope="row">@item.Day</th>
+                                <td>@item.StartTime.ToLongTimeString()</td>
+                                <td>@item.MaxStartTime.ToLongTimeString()</td>
+                                <td>@item.BreakTime min</td>
+                                <td>@item.EndTime.ToLongTimeString()</td>
+                                <td>@item.MinEndTime.ToLongTimeString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+}
+
+
+
+@if (ViewBag.IsOfficialShift)
+{
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Assigned Shift</h5>
+
+                <br />
+
+                <div Class="col-6">Shift Type  :  <b>@Model.shift shift</b></div>
+
+                <hr />
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+
+                            <th scope="col">Day</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">Max Start Time</th>
+                            <th scope="col">Break Time</th>
+                            <th scope="col">End Time</th>
+                            <th scope="col">Min End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OfficialTimming)
+                        {
+
+                            <tr>
+                                <th scope="row">@item.Day</th>
+                                <td>@item.StartTime.ToLongTimeString()</td>
+                                <td>@item.MaxStartTime.ToLongTimeString()</td>
+                                <td>@item.BreakTime min</td>
+                                <td>@item.EndTime.ToLongTimeString()</td>
+                                <td>@item.MinEndTime.ToLongTimeString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+}

@@ -1,0 +1,82 @@
+﻿@model ERP_Project.Models.Announcement
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-6">
+                <h3>Make Announcement</h3>
+            </div>
+            <div class="col-6">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+
+                                <div class="form-group">
+                                    <label asp-for="Title" class="control-label">Title</label>
+                                    <input asp-for="Title" class="form-control" required />
+                                    <span asp-validation-for="Title" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="StartDate" class="control-label">Start Date</label>
+                                    <input asp-for="StartDate" class="form-control" required />
+                                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="EndDate" class="control-label">End Date</label>
+                                    <input asp-for="EndDate" class="form-control" required />
+                                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="exampleFormControlTextarea1">Description:</label>
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" asp-for="Description" required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group mb-0"><button type="submit" class="btn btn-success mr-3">Create</button><a asp-action="Index" class="btn btn-danger">Cancel</a></div>
+                            </div>
+                        </div>
+                    </form>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,688 @@
+﻿@model ERP_Project.Models.ViewModel.ReportsVM
+@{
+    ViewData["Title"] = "EmployeeReports";
+
+}
+@section DeptTeamsjscss{
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/scrollable.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/prism.css">
+}
+@{
+    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time");
+    var dateTimeConverter = TimeZoneInfo.ConvertTime(DateTime.Now, tz);
+
+}
+<br />
+<h4>Employee Reports</h4>
+<br />
+@{ var empId = 0;}
+<form asp-action="Index">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+
+                <div class="form-group">
+                    <label asp-for="company">Select Company</label>
+                    <select class="form-control btn-square" id="company" asp-for="company.CompanyId">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+
+                <div class="form-group">
+                    <label asp-for="departments">Select Department</label>
+                    <select class="form-control btn-square" id="department" asp-for="departments.DepartmentId">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="employees">Select Employee </label>
+                <select class="form-control btn-square" id="employee" asp-for="employees.EmployeeId">
+                </select>
+            </div>
+
+        </div>
+    
+
+    </div>
+    <div class="row">
+
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label asp-for="getDate1">Select Date</label>
+                <input required class="datepicker-here form-control" asp-for="getDate1" type="datetime" data-language="en"  data-position="bottom left" placeholder="select date" data-original-title="" title="">
+
+            </div>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <br />
+
+            <button type="submit" class="btn btn-primary form-control">
+                <i class="fa fa-search-plus">&nbsp;&nbsp;Search</i>
+            </button>
+        </div>
+    </div>
+
+</form>
+<h4>  @String.Format("{0:d/M/yyyy}", Model.currdate) &nbsp; Employee Reports</h4>
+<br />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table table-xl">
+                        <thead>
+                            <tr>
+                                <th>Employee Name</th>
+                                <th>Designation</th>
+                                <th>Attendance Record</th>
+                                <th> Report</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ var count = 0;
+                                var reason = "";}
+                            @foreach (var item in Model.AllEmployees)
+                            {
+                                <tr>
+                                    @{ 
+                                        if(Model.empTimeRecord.Any(t=>t.UserRemarks!=null&&t.EmployeeId==item.EmployeeId&&t.Date.Date==Model.currdate.Date))
+                                        {
+                                            reason = Model.empTimeRecord.FirstOrDefault(t => t.UserRemarks != null && t.EmployeeId == item.EmployeeId && t.Date.Date == Model.currdate.Date).UserRemarks;
+                                        }
+                                    }
+                                    <td>@item.FullName</td>
+                                    <td>@item.Department_Designation.DesignationName</td>
+                                    <td>
+                                        <button class="btn btn-pill btn-light btn-air-light active txt-dark" type="button" data-toggle="modal" data-target="#attendancemodal_@count">   &nbsp; Time Sheet &nbsp;</button>
+                                        <div class="modal fade" id="attendancemodal_@count" tabindex="-1" role="dialog" aria-labelledby="attendancemodal_@count" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header" style="text-align:center">
+                                                        <h5>&nbsp;&nbsp; Attendance Info </h5>
+                                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+
+
+                                                                <div class="card fixed">
+
+                                                                    <div class="card-body new-update pt-sm-0" style="border-color:grey">
+                                                                        <div>
+                                                                            <br />
+                                                                            <h5>Timesheet  &nbsp;&nbsp;<small class="text-muted"> @String.Format("{0:d/M/yyyy}", Model.currdate)</small></h5>
+                                                                            <br />
+                                                                        </div>
+                                                                        @{
+                                                                            var starttime = "";
+                                                                            var endtime = "";
+                                                                            var reportingIn = "";
+                                                                            var reportingOut = "";
+                                                                            int? breaktime = null;
+                                                                            if (Model.AssignShiftList.Any(a => a.EmployeeId == item.EmployeeId))
+                                                                            {
+                                                                                var getShifttype = Model.AssignShiftList.FirstOrDefault(a => a.EmployeeId == item.EmployeeId);
+
+                                                                                var stringDay = Model.currdate.ToString("dddd");
+
+                                                                                if (getShifttype == null)
+                                                                                {
+                                                                                    reportingIn = "00:00";
+                                                                                    reportingOut = "00:00";
+                                                                                    breaktime = 0;
+                                                                                }
+                                                                                else if (getShifttype != null && getShifttype.ShiftType == "official")
+                                                                                {
+                                                                                    var shiftid = getShifttype.ShiftId;
+                                                                                    var z = Model.OfficialShiftsList.Where(f => f.Day.Equals(stringDay) && f.ShiftId == shiftid).Select(s => new
+                                                                                    {
+                                                                                        starttime = Convert.ToString(string.Format("{0:hh:mm tt}", s.StartTime)),
+                                                                                        breaktime = s.BreakTime,
+                                                                                        endtime = Convert.ToString(string.Format("{0:hh:mm tt}", s.EndTime)),
+
+                                                                                    }).FirstOrDefault();
+                                                                                    if (z == null)
+                                                                                    {
+                                                                                        reportingIn = "00:00";
+                                                                                        reportingOut = "00:00";
+                                                                                        breaktime = 0;
+
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        starttime = z.starttime;
+                                                                                        breaktime = z.breaktime;
+                                                                                        endtime = z.endtime;
+
+                                                                                        reportingIn = z.starttime;
+                                                                                        reportingOut = z.endtime;
+                                                                                        breaktime = z.breaktime;
+
+                                                                                    }
+
+                                                                                }
+                                                                                else if (getShifttype != null && getShifttype.ShiftType == "custom")
+                                                                                {
+                                                                                    var assignShiftsId = getShifttype.AssignShiftsId;
+                                                                                   // var customtym = Model.EmployeeTimmingList.Where(a => a.ShiftAssignId == assignShiftsId).ToList();
+
+                                                                                    var zt = Model.EmployeeTimmingList.Where(t => t.ShiftAssignId == assignShiftsId && t.Day.Contains(stringDay)).Select(s => new
+                                                                                    {
+                                                                                        starttime = Convert.ToString(string.Format("{0:hh:mm tt}", s.StartTime)),
+                                                                                        breaktime = s.BreakTime,
+                                                                                        endtime = Convert.ToString(string.Format("{0:hh:mm tt}", s.EndTime)),
+
+                                                                                    }).FirstOrDefault();
+
+                                                                                    if (zt == null)
+                                                                                    {
+                                                                                        reportingIn = "00:00";
+                                                                                        reportingOut = "00:00";
+                                                                                        breaktime = 0;
+
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        starttime = zt.starttime;
+                                                                                        breaktime = zt.breaktime;
+                                                                                        endtime = zt.endtime;
+
+                                                                                        reportingIn = zt.starttime;
+                                                                                        reportingOut = zt.endtime;
+                                                                                        breaktime = zt.breaktime;
+
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                reportingIn = "00:00";
+                                                                                reportingOut = "00:00";
+                                                                                breaktime = 0;
+                                                                            }
+                                                                            //////
+                                                                            DateTime? checkin = null;
+                                                                            DateTime? checkout = null;
+                                                                            var cin = "";
+                                                                            var cot = "";
+
+
+                                                                            @if (Model.empTimeRecord.Any(a => a.EmployeeId == item.EmployeeId))
+                                                                            {
+
+                                                                                if (Model.empTimeRecord.Any(a => a.EmployeeId == item.EmployeeId && a.RecordTypeName == "checkin"))
+                                                                                {
+                                                                                    checkin = Model.empTimeRecord.Where(a => a.EmployeeId == item.EmployeeId && a.RecordTypeName == "checkin").FirstOrDefault().RecordTime;
+                                                                                    cin = Convert.ToString(string.Format("{0:hh:mm tt}", checkin));
+                                                                                }
+                                                                                if (Model.empTimeRecord.Any(a => a.EmployeeId == item.EmployeeId && a.RecordTypeName == "checkout"))
+                                                                                {
+                                                                                    checkout = Model.empTimeRecord.Where(a => a.EmployeeId == item.EmployeeId && a.RecordTypeName == "checkout").FirstOrDefault().RecordTime;
+                                                                                    cot = Convert.ToString(string.Format("{0:hh:mm tt}", checkout));
+                                                                                }
+                                                                                <div class="alert alert-light dark" role="alert">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-7">
+                                                                                            <p>Reporting In Time</p>
+                                                                                            <p class="text-muted">@reportingIn</p>
+                                                                                        </div>
+                                                                                        <div class="col-md-5">
+                                                                                            <p>Check In  </p>
+                                                                                            @if (cin == "")
+                                                                                            {
+                                                                                                cin = "00:00";
+                                                                                                <small class="text-muted">@cin</small>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <small class="text-muted">@cin</small>
+                                                                                            }
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+
+
+                                                                            }
+                                                                            else
+                                                                            {
+
+                                                                                <div class="alert alert-light dark" role="alert">
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-7">
+                                                                                            <p>Reporting In Time</p>
+                                                                                            <small class="text-muted">@reportingIn</small>
+                                                                                        </div>
+                                                                                        <div class="col-md-5">
+                                                                                            <p>Check In  </p>
+                                                                                            @if (cin == "")
+                                                                                            {
+                                                                                                cin = "00:00";
+                                                                                                <small class="text-muted">@cin</small>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <small class="text-muted">@cin</small>
+                                                                                            }
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            }
+
+
+                                                                            //production hours
+                                                                            var rezult = 0.0;
+                                                                            var rezultbrk = 0.0;
+                                                                            if (cot != "")
+                                                                            {
+                                                                                double brktym = Convert.ToDouble(breaktime);
+                                                                                double ok = brktym / 60.0;
+                                                                                rezultbrk = System.Math.Round((ok), 1);
+
+                                                                                double difference = Convert.ToDateTime(cot).Subtract(Convert.ToDateTime(cin)).TotalHours;
+                                                                                rezult = System.Math.Round((difference), 1);
+                                                                                rezult = rezult - rezultbrk;
+                                                                                rezult = System.Math.Round((rezult), 1);
+                                                                                if (rezult < 0)
+                                                                                {
+                                                                                    rezult = 0;
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                rezult = 0;
+                                                                            }
+
+                                                                            //over time
+                                                                            string modelempExactEndTime = reportingOut;
+                                                                            string modelempExactStartTime = reportingIn;                                                                              modelempExactStartTime = reportingIn;
+
+                                                                            var rezultOverTime = 0.0;
+                                                                            var overtime = "";
+                                                                            if (cot != null&&cot!="")
+                                                                            {
+                                                                                double RepTymDiff = Convert.ToDateTime(modelempExactEndTime).Subtract(Convert.ToDateTime(modelempExactStartTime)).TotalHours;
+                                                                                double CIOTymDiff = Convert.ToDateTime(cot).Subtract(Convert.ToDateTime(cin)).TotalHours;
+                                                                                double diffOverTime = CIOTymDiff - RepTymDiff;
+
+                                                                                // double diffOverTime = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(endTym)).TotalHours;
+                                                                                rezultOverTime = System.Math.Round((diffOverTime), 1);
+                                                                                if (diffOverTime > 0 && diffOverTime < 1)
+                                                                                {
+                                                                                    // diffOverTime = Convert.ToDateTime(checkoutTime).Subtract(Convert.ToDateTime(endTym)).TotalMinutes;
+                                                                                    double RepTymDiff2 = Convert.ToDateTime(modelempExactEndTime).Subtract(Convert.ToDateTime(modelempExactStartTime)).TotalMinutes;
+                                                                                    double CIOTymDiff2 = Convert.ToDateTime(cot).Subtract(Convert.ToDateTime(cin)).TotalMinutes;
+                                                                                    double diffOverTime2 = CIOTymDiff2 - RepTymDiff2;
+
+                                                                                    rezultOverTime = System.Math.Round((diffOverTime2), 1);
+                                                                                    overtime = rezultOverTime + " mins";
+                                                                                }
+
+                                                                                else if (rezultOverTime <= 0)
+                                                                                {
+                                                                                    overtime = "0";
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    overtime = Math.Abs(rezultOverTime) + " hrs";
+                                                                                }
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                overtime = "0 hrs";
+                                                                            }
+                                                                            /////
+                                                                            
+                        @*                                                    var endTym = Convert.ToString(string.Format("{0:hh:mm tt}", endtime));
+                                                                            var rezultOverTime = 0.0;
+                                                                            var overtime = "0";
+                                                                            if (cot != "" && endTym != "")
+                                                                            {
+                                                                                double diffOverTime = Convert.ToDateTime(cot).Subtract(Convert.ToDateTime(endTym)).TotalHours;
+                                                                                rezultOverTime = System.Math.Round((diffOverTime), 1);
+                                                                                if (diffOverTime > 0 && diffOverTime < 1)
+                                                                                {
+                                                                                    diffOverTime = Convert.ToDateTime(cot).Subtract(Convert.ToDateTime(endTym)).TotalMinutes;
+                                                                                    rezultOverTime = System.Math.Round((diffOverTime), 1);
+                                                                                    overtime = rezultOverTime + " mins";
+                                                                                }
+
+                                                                                else if (rezultOverTime < 0)
+                                                                                {
+                                                                                    overtime = "0 hrs";
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    overtime = Math.Abs(rezultOverTime) + " hrs";
+                                                                                }
+
+                                                                            }*@
+
+
+
+
+                                                                        }
+                                                                        <div class="alert alert-light dark" role="alert">
+                                                                            <div class="row">
+                                                                                <div class="col-md-7">
+                                                                                    <p>Reporting Out Time</p>
+                                                                                    <small class="text-muted">@reportingOut</small>
+                                                                                </div>
+                                                                                <div class="col-md-5">
+                                                                                    <p>Check Out  </p>
+                                                                                    @if (cot == "")
+                                                                                    {
+                                                                                        cot = "00:00";
+                                                                                        <small class="text-muted">@cot</small>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <small class="text-muted">@cot</small>
+                                                                                    }
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+
+                                                                            <div class="col-md-7">
+                                                                                <div class="alert alert-light dark" role="alert">
+                                                                                    <p>Working hrs</p>
+                                                                                    <small class="text-muted">@rezult hrs</small>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-5">
+                                                                                <div class="alert alert-light dark" role="alert">
+
+                                                                                    <p>Over Time </p>
+                                                                                    <small class="text-muted">@overtime</small>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br />
+                                                                            <div class="col-md-7">
+                                                                                <div class="alert alert-light dark" role="alert">
+                                                                                    <p>Production hrs</p>
+                                                                                    <small class="text-muted">@rezult hrs</small>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+
+
+                                                                <div class="col-lg-12">
+                                                                    <div class="card fixed">
+                                                                        <div>
+                                                                            <br />
+                                                                            <h5>&nbsp;&nbsp; Today Activities</h5>
+                                                                            <br />
+                                                                        </div>
+                                                                        @{}
+                                                                        <div class="card-body new-update pt-sm-0 vertical-scroll scroll-demo">
+
+                                                                            <div class="activity-timeline">
+                                                                                <div class="container">
+                                                                                    <br />
+                                                                                    @{
+                                                                                        if (Model.empTimeRecord.Count() <= 0)
+                                                                                        {
+                                                                                            <div class="row">
+
+                                                                                                <div class="activity-line"></div>
+                                                                                                <div class="activity-dot-secondary"></div>
+                                                                                                <div class="media-body">
+
+                                                                                                    <h6><em style="color:gray">&nbsp;&nbsp;&nbsp;&nbsp; Today Activity</em></h6>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        }
+
+                                                                                        else
+                                                                                        {
+                                                                                            @foreach (var obj in Model.empTimeRecord)
+                                                                                            {
+                                                                                                @if (obj.EmployeeId == item.EmployeeId)
+                                                                                                {
+                                                                                                    <div class="row">
+                                                                                                        <div class="activity-line"></div>
+                                                                                                        <div class="activity-dot-secondary"></div>
+                                                                                                        <div class="media-body">
+                                                                                                            <small>&nbsp;&nbsp;&nbsp;&nbsp; @obj.RecordTypeName </small><br />
+                                                                                                            <small>&nbsp;&nbsp;&nbsp;&nbsp;<i class="icon-timer"></i><span>&nbsp;&nbsp;@Convert.ToString(string.Format("{0:hh:mm tt}", obj.RecordTime))</span></small>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <br />
+                                                                                                }
+                                                                                            }
+
+                                                                                        }
+                                                                                    }
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-1"></div>
+                                                            <div class="col-md-6">
+                                                                @if (Model.empTimeRecord.Any(t => t.UserRemarks != null && t.EmployeeId == item.EmployeeId && t.Date.Date == Model.currdate.Date))
+                                                                {
+                                                                    <div>
+                                                                        <h6 style="color:red">Reason for early leave:</h6>
+                                                                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@reason</p>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                   
+                                                      
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-pill btn-light btn-air-light active txt-dark" type="button" @*onclick="SelectedId(@item.EmployeeId)" *@ data-toggle="modal" data-target="#reportmodal_@count">&nbsp; Today's Report&nbsp; </button>
+                                        <div class="modal fade" id="reportmodal_@count" tabindex="-1" role="dialog" aria-labelledby="reportmodal_@count" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Report Description</h5>
+                                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                        <p>
+
+                                                            @{
+                                                                var report = "";
+
+                                                                if (Model.employeeReports != null)
+                                                                {
+                                                                    if (Model.employeeReports.Any(a => a.Date.Date == dateTimeConverter.Date && a.EmployeeId == item.EmployeeId))
+                                                                    {
+                                                                        report = Model.employeeReports.FirstOrDefault(a => a.Date.Date == dateTimeConverter.Date && a.EmployeeId == item.EmployeeId).ReportDescription;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        report = "Report not submitted";
+                                                                    }
+                                                                }
+                                                                else if (Model.employeePerReport.Any(a => a.EmployeeId == item.EmployeeId))
+                                                                {
+                                                                    report = Model.employeePerReport.FirstOrDefault(a => a.EmployeeId == item.EmployeeId).ReportDescription;
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    report = "Report not submitted";
+                                                                }
+                                                            }
+                                                            @report
+                                                        </p>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                count++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section DeptTeamsjs{
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+    <script src="~/assets/js/dropzone/dropzone-script.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+
+    <script src="~/assets/js/scrollable/perfect-scrollbar.min.js"></script>
+    <script src="~/assets/js/scrollable/scrollable-custom.js"></script>
+
+    <script src="~/assets/js/prism/prism.min.js"></script>
+    <script src="~/assets/js/clipboard/clipboard.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            debugger;
+            var companyddl = $('#company');
+            var departmentddl = $('#department');
+            var employeeddl = $('#employee');
+            $.ajax({
+                type: "post",
+                url: "/AdminReports/GetCompanies",
+                datatype: "json",
+                traditional: true,
+                success: function (data) {   //data is the json response from server
+
+                    companyddl.append($('<option/>', { value: -1, text: '--Select Company--' }));
+                    departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                    // employeeHeadddl.append($('<option/>', { value: -1, text: '--Select Team Heads--' }));
+                    // employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+
+                    departmentddl.prop('disabled', true);
+                    //   employeeHeadddl.prop('disabled', true);
+                    employeeddl.prop('disabled', true);
+
+
+                    $(data).each(function (index, item) {
+                        companyddl.append($('<option/>', { value: item.value, text: item.text }));
+                    });
+                }
+            });
+
+            companyddl.change(function () {
+                debugger;
+                if ($(this).val() == "-1")   //if the selected value is -1(means no value selected)
+                {
+                    departmentddl.empty();
+                    departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                    departmentddl.val('-1');
+                    departmentddl.prop('disabled', true);
+                }
+                else {
+                    $.ajax({
+                        type: "post",
+                        url: "/AdminReports/GetDepartmentsByCompanyId",
+                        data: { Companyid: $(this).val() },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+                            debugger;
+                            departmentddl.empty(); //empty already existing values
+                            departmentddl.append($('<option/>', { value: -1, text: '--Select Department--' }));
+                            departmentddl.prop('disabled', false);
+
+                            $(data).each(function (index, item) {
+                                departmentddl.append($('<option/>', { value: item.value, text: item.text }));
+                            });
+                        }
+                    });
+                }
+            });
+
+            departmentddl.change(function () {
+                debugger;
+                if ($(this).val() == "-1")   //if the selected value is -1(means no value selected)
+                {
+
+                    employeeddl.empty();
+                    //  employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+                    employeeddl.val('-1');
+                    employeeddl.prop('disabled', true);
+                }
+                else {
+                    $.ajax({
+                        type: "post",
+                        url: "/AdminReports/GetEmployeesByDepartmentId",
+                        data: { DepartmentId: $(this).val() },
+                        datatype: "json",
+                        traditional: true,
+                        success: function (data) {
+                            employeeddl.empty(); //empty already existing values
+                            //  employeeddl.append($('<option/>', { value: -1, text: '--Select Team Employees--' }));
+                            employeeddl.prop('disabled', false);
+
+                            $(data).each(function (index, item) {
+
+                                employeeddl.append($('<option/>', { value: item.value, text: item.text }));
+
+                            });
+                        }
+                    });
+                }
+            });
+
+
+        });
+
+        debugger
+        function SelectedId(obj) {
+            debugger
+            this.empId = obj;
+            //  document.getElementById('empid').value = obj;
+            return true;
+        }
+
+
+    </script>
+}
