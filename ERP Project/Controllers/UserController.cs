@@ -398,7 +398,7 @@ namespace ERP_Project.Controllers
                 updateExistingChkout.Status = false;
                 _db.EmployeeTimeRecord.Update(updateExistingChkout);
                 _db.SaveChanges();
-            }
+            } 
             else
             {
                 EmployeeTimeRecord etr = new EmployeeTimeRecord();
