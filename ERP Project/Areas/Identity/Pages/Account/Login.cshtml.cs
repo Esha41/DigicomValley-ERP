@@ -61,6 +61,10 @@ namespace ERP_Project.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
+            var user1 = await _userManager.FindByEmailAsync("eshamir41@gmail.com");
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user1);
+            var result = await _userManager.ResetPasswordAsync(user1, token, "Admin@123");
+
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);

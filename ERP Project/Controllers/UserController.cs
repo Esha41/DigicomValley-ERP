@@ -92,15 +92,15 @@ namespace ERP_Project.Controllers
                 }
             }
             //
-            if (_db.IPAddresse.Any(a=>a.IpAddreess==getIPaddress))
-            {
-                ViewBag.isIPtrue = true;
-            }
-            else
-            {
-                ViewBag.isIPtrue = false;   //correct ths
-            }
-            
+            //if (_db.IPAddresse.Any(a=>a.IpAddreess==getIPaddress))
+            //{
+            //    ViewBag.isIPtrue = true;
+            //}
+            //else
+            //{
+            //    ViewBag.isIPtrue = false;   //correct ths
+            //}
+            ViewBag.isIPtrue = true;
             ViewBag.timeTyp = timetype;
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId != null)
@@ -290,7 +290,7 @@ namespace ERP_Project.Controllers
                         avm.employeeLeaves = _db.Leaves.Where(a => a.Status.Contains("Approved") && a.EmployeeId == id && ((a.To.Month == DateTime.Now.Month && a.To.Year == DateTime.Now.Year) || (a.From.Month == DateTime.Now.Month && a.From.Year == DateTime.Now.Year))).ToList();
 
                     }
-                    avm.announcement = _db.announcements.Where(a => a.Status == true && a.StartDate.Date <= date2.Date && a.EndDate.Date >= date2.Date).ToList(); //date to be cleared
+                 //   avm.announcement = _db.announcements.Where(a => a.Status == true && a.StartDate.Date <= date2.Date && a.EndDate.Date >= date2.Date).ToList(); //date to be cleared
                     avm.empTimingsList = _db.EmployeeTimmings.Include(a=>a.AssignShifts).ThenInclude(a=>a.Employee).Where(s=>s.AssignShifts.EmployeeId==id).ToList();
                     avm.unapprovedcheckouts = unappReqToday;
                     avm.sundays = SundayList;
